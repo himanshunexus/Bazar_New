@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% load money %}
+{% block content %}
+<section class="section">
+  <h1>Order placed</h1>
+  <p>Pay in cash when your order arrives.</p>
+  {% for order in group.orders.all %}<article class="card"><h2>{{ order.shop.name }}</h2><p>{{ order.order_number }} · {{ order.total|inr }}</p></article>{% endfor %}
+</section>
+{% endblock %}

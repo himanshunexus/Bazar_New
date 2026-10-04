@@ -1,0 +1,17 @@
+{% load money %}
+{% if q %}
+<section class="search-results">
+  <div>
+    <h2>Shops</h2>
+    {% for shop in shops %}
+      <a class="result" href="{{ shop.get_absolute_url }}">{{ shop.name }} <span>{{ shop.city }}</span></a>
+    {% empty %}<p>No shops matched.</p>{% endfor %}
+  </div>
+  <div>
+    <h2>Products</h2>
+    {% for product in products %}
+      <a class="result" href="{{ product.get_absolute_url }}">{{ product.name }} <span>{{ product.price|inr }}</span></a>
+    {% empty %}<p>No products matched.</p>{% endfor %}
+  </div>
+</section>
+{% endif %}

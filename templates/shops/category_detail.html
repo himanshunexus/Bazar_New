@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="section">
+  <h1>{{ category.icon }} {{ category.name }}</h1>
+  <div class="grid">
+    {% for shop in page.object_list %}
+      <article class="card"><h2><a href="{{ shop.get_absolute_url }}">{{ shop.name }}</a></h2><p>{{ shop.city }} {{ shop.pincode }}</p></article>
+    {% empty %}<p>No shops in this category.</p>{% endfor %}
+  </div>
+</section>
+{% endblock %}

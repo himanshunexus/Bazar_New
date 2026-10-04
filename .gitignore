@@ -1,0 +1,15 @@
+.DS_Store
+.env
+*.sqlite3
+db.sqlite3
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+staticfiles/
+media/
+.venv/
+.venv311/
+venv/
+*.log

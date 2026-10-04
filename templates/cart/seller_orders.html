@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load money %}
+{% block content %}
+<section class="section">
+  <h1>Incoming Orders</h1>
+  {% for order in orders %}
+    <article class="card">
+      <h2>{{ order.order_number }}</h2>
+      <p>{{ order.status }} · {{ order.total|inr }}</p>
+      <form method="post" action="{% url 'cart:status' order.id %}">{% csrf_token %}
+        <select name="status">
+          <option value="CONFIRMED">Confirm</option>
+          <option value="OUT_FOR_DELIVERY">Out for delivery</option>
+          <option value="DELIVERED">Delivered</option>
+          <option value="CANCELLED">Cancel</option>
+        </select>
+        <button class="button">Update</button>
+      </form>
+    </article>
+  {% empty %}<p>No orders yet.</p>{% endfor %}
+</section>
+{% endblock %}

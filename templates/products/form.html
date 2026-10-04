@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="section narrow">
+  <h1>Product</h1>
+  <form method="post" enctype="multipart/form-data">{% csrf_token %}
+    {{ form.as_p }}
+    {{ formset.management_form }}
+    {% for image_form in formset %}<div class="subform">{{ image_form.as_p }}</div>{% endfor %}
+    <button class="button">Save</button>
+  </form>
+</section>
+{% endblock %}

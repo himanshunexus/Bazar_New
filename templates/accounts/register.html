@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="section narrow">
+  <h1>Register</h1>
+  <div class="segmented"><a href="?role=customer">Customer</a><a href="?role=seller">Seller</a></div>
+  <form method="post">{% csrf_token %}<input type="hidden" name="role" value="{{ role }}">{{ form.as_p }}<button class="button">Create account</button></form>
+</section>
+{% endblock %}

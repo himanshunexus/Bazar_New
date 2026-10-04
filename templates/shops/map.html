@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+{% endblock %}
+{% block content %}
+<section class="section">
+  <h1>Shop Map</h1>
+  <div id="map"></div>
+</section>
+<script>
+  const center = [{{ DEFAULT_LAT }}, {{ DEFAULT_LNG }}];
+  const map = L.map('map').setView(center, 13);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 19, attribution: '&copy; OpenStreetMap'}).addTo(map);
+  fetch("{% url 'shops:geojson' %}").then(r => r.json()).then(data => {
+    L.geoJSON(data, {
+      onEachFeature: (feature, layer) => {
+        const p = feature.properties;
+        layer.bindPopup(`<strong>${p.name}</strong><br>${p.hours}<br><a href="${p.url}">Open shop</a><br><a href="${p.directions}">Directions</a>`);
+      }
+    }).addTo(map);
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: bazar-web
+    runtime: python
+    buildCommand: ./build.sh
+    startCommand: gunicorn config.wsgi:application
+    healthCheckPath: /healthz
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings.production
+      - key: SECRET_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: DB_SSL_REQUIRE
+        value: "True"
+      - key: DISABLE_SERVER_SIDE_CURSORS
+        value: "True"
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: ML_SERVICE_URL
+        value: https://bazar-ml.onrender.com/predict
+  - type: web
+    name: bazar-ml
+    runtime: docker
+    dockerContext: ./ml_service
+    dockerfilePath: ./ml_service/Dockerfile
+    healthCheckPath: /health

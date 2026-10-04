@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="section narrow">
+  <h1>Checkout</h1>
+  <p class="payment-line">Payment: Cash on Delivery</p>
+  <form method="post">{% csrf_token %}{{ form.as_p }}<button class="button">Place COD order</button></form>
+</section>
+{% endblock %}

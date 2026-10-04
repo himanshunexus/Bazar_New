@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load money %}
+{% block content %}
+<section class="section">
+  <h1>Cart</h1>
+  {% for group in groups %}
+    <article class="card">
+      <h2>{{ group.shop.name }}</h2>
+      {% for item in group.items %}
+        <div class="row"><span>{{ item.product.name }} x {{ item.quantity }}</span><strong>{{ item.line_total|inr }}</strong></div>
+      {% endfor %}
+      <p>Subtotal {{ group.subtotal|inr }}</p>
+    </article>
+  {% empty %}<p>Your cart is empty.</p>{% endfor %}
+  {% if cart|length %}<a class="button" href="{% url 'cart:checkout' %}">Checkout</a>{% endif %}
+</section>
+{% endblock %}
