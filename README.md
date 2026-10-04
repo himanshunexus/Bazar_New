@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # BAZAR
 
 BAZAR is a Django 5.1 hyperlocal marketplace for India. Customers discover nearby shops, add products from multiple shops to one session cart, and place Cash on Delivery orders. Checkout splits the cart into one order per shop.
@@ -58,6 +57,3 @@ Render uses `render.yaml`.
 For Supabase, use the pooler connection string. If the pooler is transaction mode, set `DISABLE_SERVER_SIDE_CURSORS=True`. Run `python manage.py lockdown_db` after migrations.
 
 Payments are COD only. The codebase intentionally contains no online payment gateway integrations.
-=======
-# Bazar_-New
->>>>>>> origin/main
