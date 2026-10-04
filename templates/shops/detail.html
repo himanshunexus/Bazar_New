@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load money %}
+{% block content %}
+<section class="shop-header">
+  <div>
+    <p>{{ shop.category.icon }} {{ shop.category.name }}</p>
+    <h1>{{ shop.name }}</h1>
+    <p>{{ shop.address }}, {{ shop.city }} {{ shop.pincode }}</p>
+    <p>{% if shop.is_open_now %}Open now{% else %}Closed now{% endif %} · {{ shop.opening_time|time:"H:i" }}-{{ shop.closing_time|time:"H:i" }}</p>
+  </div>
+</section>
+<section class="section">
+  <h2>Catalogue</h2>
+  <div class="grid">
+    {% for product in products %}
+      <article class="card product">
+        <h3><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h3>
+        <p>{{ product.unit_label }} · {{ product.stock }} in stock</p>
+        <strong>{{ product.price|inr }}</strong>
+        <form method="post" action="{% url 'cart:add' product.id %}">{% csrf_token %}<button class="button">Add</button></form>
+      </article>
+    {% empty %}<p>No active products.</p>{% endfor %}
+  </div>
+</section>
+<section class="section">
+  <h2>Reviews</h2>
+  {% include "reviews/shop_form.html" with shop=shop %}
+  {% for review in shop.reviews.all %}<article class="card"><strong>{{ review.rating }}/5</strong><p>{{ review.comment }}</p></article>{% empty %}<p>No reviews yet.</p>{% endfor %}
+</section>
+{% endblock %}

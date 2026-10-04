@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load money %}
+{% block content %}
+<section class="section">
+  <div class="section-head"><h1>Products</h1><a class="button" href="{% url 'products:new' %}">New</a></div>
+  <a href="{% url 'products:csv_import' %}">Bulk CSV import</a>
+  {% for product in products %}
+    <article class="row"><span>{{ product.name }}</span><span>{{ product.price|inr }}</span><span>{{ product.stock }}</span><a href="{% url 'products:edit' product.id %}">Edit</a></article>
+  {% empty %}<p>No products yet.</p>{% endfor %}
+</section>
+{% endblock %}

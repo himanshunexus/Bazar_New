@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load money %}
+{% block title %}BAZAR - Nearby Shops{% endblock %}
+{% block content %}
+<section class="hero">
+  <div>
+    <p class="eyebrow">Hyperlocal marketplace</p>
+    <h1>Nearby shops, one cash-on-delivery cart.</h1>
+  </div>
+  <form class="search" hx-get="{% url 'core:search' %}" hx-target="#search-results" hx-trigger="input changed delay:300ms">
+    <label for="q">Search BAZAR</label>
+    <input id="q" name="q" placeholder="Search products or shops">
+  </form>
+</section>
+<div id="search-results"></div>
+<section class="section">
+  <div class="section-head"><h2>Shop Categories</h2></div>
+  <div class="grid compact">
+    {% for category in categories %}
+      <a class="tile" href="{% url 'shops:category' category.slug %}"><span>{{ category.icon }}</span>{{ category.name }}</a>
+    {% empty %}<p>No categories yet.</p>{% endfor %}
+  </div>
+</section>
+<section class="section">
+  <div class="section-head"><h2>Nearby Shops</h2><a href="{% url 'shops:map' %}">Map view</a></div>
+  <div class="grid">
+    {% for shop in shops %}
+      <article class="card">
+        <h3><a href="{{ shop.get_absolute_url }}">{{ shop.name }}</a></h3>
+        <p>{{ shop.city }} {{ shop.pincode }}</p>
+        <p>{% if shop.is_open_now %}Open now{% else %}Closed now{% endif %}</p>
+      </article>
+    {% empty %}<p>No active shops found.</p>{% endfor %}
+  </div>
+</section>
+<section class="section">
+  <div class="section-head"><h2>Recommended Products</h2></div>
+  <div class="grid">
+    {% for product in recommendations %}
+      <article class="card product">
+        <h3><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h3>
+        <p>{{ product.shop.name }}</p>
+        <strong>{{ product.price|inr }}</strong>
+      </article>
+    {% empty %}<p>Recommendations will appear after products are available.</p>{% endfor %}
+  </div>
+</section>
+{% endblock %}

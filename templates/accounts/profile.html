@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="section">
+  <div class="section-head"><h1>Profile</h1><a class="button" href="{% url 'accounts:address_new' %}">Add address</a></div>
+  {% for address in addresses %}<article class="card"><h2>{{ address.label }}</h2><p>{{ address.single_line }}</p><a href="{% url 'accounts:address_edit' address.id %}">Edit</a></article>{% empty %}<p>No addresses saved.</p>{% endfor %}
+</section>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load money %}
+{% block title %}Seller Dashboard{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="section-head">
+    <h1>{{ shop.name }}</h1>
+    <a class="button" href="{% url 'products:new' %}">New product</a>
+  </div>
+  <div class="stats">
+    <div><strong>{{ orders.count }}</strong><span>Total orders</span></div>
+    <div><strong>{{ low_stock|length }}</strong><span>Low-stock products</span></div>
+    <div><strong>{{ shop.avg_rating }}</strong><span>Rating</span></div>
+  </div>
+</section>
+<section class="section">
+  <h2>Low Stock</h2>
+  {% for product in low_stock %}<p>{{ product.name }} - {{ product.stock }}</p>{% empty %}<p>Stock is healthy.</p>{% endfor %}
+</section>
+{% endblock %}

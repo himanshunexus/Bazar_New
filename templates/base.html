@@ -1,0 +1,35 @@
+{% load static money %}
+<!doctype html>
+<html lang="en-IN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}BAZAR{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/output.css' %}">
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+  {% block head %}{% endblock %}
+</head>
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+  <header class="topbar">
+    <a class="brand" href="{% url 'core:home' %}">BAZAR</a>
+    <nav class="nav">
+      <a href="{% url 'shops:categories' %}">Categories</a>
+      <a href="{% url 'shops:map' %}">Map</a>
+      <a href="{% url 'cart:detail' %}">Cart</a>
+      {% if request.user.is_authenticated %}
+        {% if request.user.is_seller %}<a href="{% url 'core:seller_dashboard' %}">Seller</a>{% endif %}
+        <a href="{% url 'cart:history' %}">Orders</a>
+        <a href="{% url 'accounts:profile' %}">Profile</a>
+        <form method="post" action="{% url 'accounts:logout' %}">{% csrf_token %}<button>Logout</button></form>
+      {% else %}
+        <a href="{% url 'accounts:login' %}">Login</a>
+        <a class="button" href="{% url 'accounts:register' %}">Register</a>
+      {% endif %}
+    </nav>
+  </header>
+  {% if messages %}
+    <section class="messages">{% for message in messages %}<p class="{{ message.tags }}">{{ message }}</p>{% endfor %}</section>
+  {% endif %}
+  <main class="page">{% block content %}{% endblock %}</main>
+</body>
+</html>

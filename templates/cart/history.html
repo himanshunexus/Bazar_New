@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% load money %}
+{% block content %}
+<section class="section">
+  <h1>Orders</h1>
+  {% for order in orders %}<article class="card"><h2>{{ order.order_number }}</h2><p>{{ order.shop.name }} · {{ order.status }} · {{ order.total|inr }}</p></article>{% empty %}<p>No orders yet.</p>{% endfor %}
+</section>
+{% endblock %}

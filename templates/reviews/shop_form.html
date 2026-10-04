@@ -1,0 +1,7 @@
+{% if request.user.is_authenticated %}
+<form method="post" action="{% url 'reviews:shop' shop.id %}" class="inline-form">{% csrf_token %}
+  <label>Rating <input name="rating" type="number" min="1" max="5" value="5"></label>
+  <label>Comment <textarea name="comment"></textarea></label>
+  <button class="button">Review shop</button>
+</form>
+{% endif %}
