@@ -38,3 +38,30 @@ from pg_class
 join pg_namespace on pg_namespace.oid = pg_class.relnamespace
 where nspname = 'public' and relkind = 'r';
 ```
+## Persistent demo data
+
+From a trusted machine, configure `DATABASE_URL` with the Supabase transaction-pooler URL and run:
+
+```bash
+python manage.py migrate
+python manage.py seed_production --confirm
+```
+
+Useful variables are `DEFAULT_LAT`, `DEFAULT_LNG`, `SEED_CITY`, `SEED_PINCODE`, and `SEED_DEMO_PASSWORD`. Set `SEED_ON_DEPLOY=true` only if Render should run the idempotent seed during deployment. `DJANGO_SUPERUSER_USERNAME`, `DJANGO_SUPERUSER_EMAIL`, and `DJANGO_SUPERUSER_PASSWORD` configure the optional admin command.
+
+To inspect the seeded records in Supabase:
+
+```sql
+select 'users' as table_name, count(*) from accounts_user where username like 'demo_%'
+union all select 'shops', count(*) from shops_shop where slug like 'demo-%'
+union all select 'products', count(*) from products_product where slug like 'demo-%'
+union all select 'orders', count(*) from cart_order where order_number like 'DEMO-%';
+
+select * from get_shops_within_radius(28.6139, 77.2090, 5);
+```
+
+To remove only demo data and recreate it:
+
+```bash
+python manage.py seed_production --wipe-demo --confirm
+```

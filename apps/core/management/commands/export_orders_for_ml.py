@@ -12,7 +12,10 @@ class Command(BaseCommand):
         parser.add_argument("path")
 
     def handle(self, *args, **options):
-        rows = OrderItem.objects.filter(product__isnull=False).select_related("order", "product").values_list(
+        rows = OrderItem.objects.filter(
+            product__isnull=False,
+            order__status="DELIVERED",
+        ).select_related("order", "product").values_list(
             "order_id", "order__customer_id", "product_id"
         )
         with open(options["path"], "w", newline="", encoding="utf-8") as handle:

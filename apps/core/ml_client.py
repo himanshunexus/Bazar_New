@@ -45,7 +45,21 @@ def get_recommendations(user_id, recent_product_ids, top_n=10):
         product_ids = data.get("recommended_product_ids")
         if not isinstance(product_ids, list) or not all(isinstance(pid, int) for pid in product_ids):
             raise ValueError("Bad recommendation shape")
-        return product_ids[:top_n]
+        from apps.products.models import Product
+
+        valid_ids = set(
+            Product.objects.filter(
+                id__in=product_ids,
+                is_active=True,
+                stock__gt=0,
+                shop__is_active=True,
+            ).values_list("id", flat=True)
+        )
+        hydrated_ids = [pid for pid in product_ids if pid in valid_ids]
+        if hydrated_ids:
+            return hydrated_ids[:top_n]
+        logger.info("ML service returned no active products in this database; using trending")
+        return get_trending_product_ids(top_n)
     except Exception as exc:
         logger.info("ML recommendation fallback: %s", exc)
         cache.set(CIRCUIT_KEY, True, 30)

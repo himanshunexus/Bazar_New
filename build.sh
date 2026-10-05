@@ -19,4 +19,8 @@ esac
 pip install -r requirements.txt
 python manage.py collectstatic --noinput
 python manage.py migrate --noinput
+python manage.py ensure_superuser
+if [[ "${SEED_ON_DEPLOY:-false}" == "true" ]]; then
+    python manage.py seed_production --confirm
+fi
 python manage.py lockdown_db
