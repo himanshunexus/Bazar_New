@@ -16,6 +16,8 @@ services:
         value: "True"
       - key: DISABLE_SERVER_SIDE_CURSORS
         value: "True"
+      - key: SEED_ON_DEPLOY
+        value: "true"
       - key: CLOUDINARY_CLOUD_NAME
         sync: false
       - key: CLOUDINARY_API_KEY
