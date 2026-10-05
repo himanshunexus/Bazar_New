@@ -74,14 +74,14 @@ TEMPLATES = [
     }
 ]
 
-DATABASE_URL = env("DATABASE_URL", default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}")
+DATABASE_URL = env("DATABASE_URL", default="") or f"sqlite:///{BASE_DIR / 'db.sqlite3'}"
 DATABASES = {
     "default": dj_database_url.parse(
         DATABASE_URL,
         conn_max_age=env("DB_CONN_MAX_AGE"),
     )
 }
-if env("DB_SSL_REQUIRE"):
+if env("DB_SSL_REQUIRE") and DATABASES["default"]["ENGINE"].endswith("postgresql"):
     DATABASES["default"].setdefault("OPTIONS", {})
     DATABASES["default"]["OPTIONS"]["sslmode"] = "require"
 DATABASES["default"]["DISABLE_SERVER_SIDE_CURSORS"] = env("DISABLE_SERVER_SIDE_CURSORS")
