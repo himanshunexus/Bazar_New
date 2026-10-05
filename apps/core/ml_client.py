@@ -12,6 +12,13 @@ CIRCUIT_KEY = "ml:circuit_open"
 TRENDING_KEY = "ml:trending:{top_n}"
 
 
+def _service_url():
+    url = settings.ML_SERVICE_URL.strip()
+    if url.startswith("[") and "](" in url and url.endswith(")"):
+        url = url[url.find("](") + 2 : -1]
+    return url
+
+
 def get_trending_product_ids(top_n=10):
     cache_key = TRENDING_KEY.format(top_n=top_n)
     cached = cache.get(cache_key)
@@ -39,7 +46,7 @@ def get_recommendations(user_id, recent_product_ids, top_n=10):
         return get_trending_product_ids(top_n)
     payload = {"user_id": user_id, "recent_product_ids": list(OrderedDict.fromkeys(recent_product_ids or []))[:20], "top_n": top_n}
     try:
-        response = session.post(settings.ML_SERVICE_URL, json=payload, timeout=1.5)
+        response = session.post(_service_url(), json=payload, timeout=1.5)
         response.raise_for_status()
         data = response.json()
         product_ids = data.get("recommended_product_ids")
