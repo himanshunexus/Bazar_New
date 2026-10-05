@@ -93,15 +93,20 @@ def evaluate(rec: Recommender, test_df: pd.DataFrame, k=10, seed=SEED, max_order
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--model-dir", default=os.getenv("MODEL_DIR", "model"))
+    parser.add_argument("--csv", help="train from order_id,user_id,product_id CSV")
     parser.add_argument("--save-csv", action="store_true", help="also write the synthetic orders to orders.csv")
     args = parser.parse_args()
     out = Path(args.model_dir)
     out.mkdir(parents=True, exist_ok=True)
 
-    df = generate_orders()
-    print(f"Generated {df['order_id'].nunique()} orders, {len(df)} rows, "
+    df = pd.read_csv(args.csv) if args.csv else generate_orders()
+    required = {"order_id", "user_id", "product_id"}
+    if not required.issubset(df.columns):
+        raise ValueError(f"CSV must contain columns: {', '.join(sorted(required))}")
+    source = "Loaded" if args.csv else "Generated"
+    print(f"{source} {df['order_id'].nunique()} orders, {len(df)} rows, "
           f"{df['user_id'].nunique()} users, {df['product_id'].nunique()} products")
-    if args.save_csv:
+    if args.save_csv and not args.csv:
         df.to_csv("orders.csv", index=False)
 
     # 1) honest offline check: train on 80% of orders, test on the other 20%
