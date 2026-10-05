@@ -55,5 +55,6 @@ Render uses `render.yaml`.
 - `bazar-ml`: Docker service with `ml_service/Dockerfile`, health check `/health`.
 
 For Supabase, use the pooler connection string. If the pooler is transaction mode, set `DISABLE_SERVER_SIDE_CURSORS=True`. Run `python manage.py lockdown_db` after migrations.
+The production build requires `DATABASE_URL` to be configured as a PostgreSQL URL; it will fail rather than migrate a local SQLite database.
 
 Payments are COD only. The codebase intentionally contains no online payment gateway integrations.
