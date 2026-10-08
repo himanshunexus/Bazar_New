@@ -6,6 +6,7 @@ urlpatterns = [
     path("", include("apps.core.urls")),
     path("accounts/", include("apps.accounts.urls")),
     path("shops/", include("apps.shops.urls")),
+    path("api/shops/", include(("apps.shops.urls", "shops_api"), namespace="shops_api")),
     path("products/", include("apps.products.urls")),
     path("cart/", include("apps.cart.urls")),
     path("reviews/", include("apps.reviews.urls")),
