@@ -1,7 +1,10 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
+from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
+from datetime import timedelta
 from django.views.decorators.http import require_http_methods
 
 from apps.core.decorators import seller_required
@@ -9,7 +12,7 @@ from apps.products.models import Product
 
 from .cart import Cart
 from .forms import CheckoutForm
-from .models import Order
+from .models import DeliveryAgent, Order
 from .services import CheckoutError, place_order, transition_order
 
 
@@ -83,7 +86,9 @@ def order_history(request):
 
 @login_required
 def order_detail(request, pk):
-    order = get_object_or_404(request.user.orders.select_related("shop").prefetch_related("items"), pk=pk)
+    order = get_object_or_404(
+        request.user.orders.select_related("shop", "delivery_agent").prefetch_related("items"), pk=pk
+    )
     return render(request, "cart/order_detail.html", {"order": order})
 
 
@@ -101,8 +106,33 @@ def reorder(request, pk):
 
 @seller_required
 def seller_orders(request):
-    orders = request.user.shop.orders.prefetch_related("items").select_related("customer").all()
-    return render(request, "cart/seller_orders.html", {"orders": orders})
+    orders = request.user.shop.orders.prefetch_related("items").select_related("customer", "delivery_agent").all()
+    return render(request, "cart/seller_orders.html", {"orders": orders, "delivery_agents": DeliveryAgent.objects.filter(is_available=True)})
+
+
+@seller_required
+@require_http_methods(["POST"])
+def dispatch_order(request, pk):
+    with transaction.atomic():
+        order = get_object_or_404(request.user.shop.orders.select_for_update(), pk=pk)
+        agent = get_object_or_404(
+            DeliveryAgent.objects.select_for_update(),
+            pk=request.POST.get("delivery_agent"),
+            is_available=True,
+        )
+        if order.status not in {Order.Status.PLACED, Order.Status.CONFIRMED}:
+            messages.error(request, "Only placed or confirmed orders can be dispatched.")
+            return redirect("cart:seller_orders")
+        dispatched_at = timezone.now()
+        order.delivery_agent = agent
+        order.dispatched_at = dispatched_at
+        order.estimated_delivery_time = dispatched_at + timedelta(minutes=60)
+        order.status = Order.Status.DISPATCHED
+        order.save(update_fields=["delivery_agent", "dispatched_at", "estimated_delivery_time", "status", "updated_at"])
+        agent.is_available = False
+        agent.save(update_fields=["is_available"])
+    messages.success(request, f"{order.order_number} dispatched with {agent.name}.")
+    return redirect("cart:seller_orders")
 
 
 @login_required

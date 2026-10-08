@@ -15,5 +15,6 @@ urlpatterns = [
     path("orders/<int:pk>/", views.order_detail, name="order_detail"),
     path("orders/<int:pk>/reorder/", views.reorder, name="reorder"),
     path("seller/orders/", views.seller_orders, name="seller_orders"),
+    path("seller/orders/<int:pk>/dispatch/", views.dispatch_order, name="dispatch"),
     path("orders/<int:pk>/status/", views.update_order_status, name="status"),
 ]
