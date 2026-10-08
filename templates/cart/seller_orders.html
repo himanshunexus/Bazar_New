@@ -6,7 +6,18 @@
   {% for order in orders %}
     <article class="card">
       <h2>{{ order.order_number }}</h2>
-      <p>{{ order.status }} · {{ order.total|inr }}</p>
+      <p>{{ order.get_status_display }} · {{ order.total|inr }}</p>
+      {% if order.delivery_agent %}<p class="muted">Assigned to {{ order.delivery_agent.name }} · {{ order.delivery_agent.phone }}</p>{% endif %}
+      {% if order.status == "PLACED" or order.status == "CONFIRMED" %}
+        <form method="post" action="{% url 'cart:dispatch' order.id %}" class="dispatch-form">{% csrf_token %}
+          <label for="agent-{{ order.id }}">Delivery partner</label>
+          <select id="agent-{{ order.id }}" name="delivery_agent" required>
+            <option value="">Select available partner</option>
+            {% for agent in delivery_agents %}<option value="{{ agent.id }}">{{ agent.name }} · {{ agent.phone }}{% if agent.vehicle_number %} · {{ agent.vehicle_number }}{% endif %}</option>{% endfor %}
+          </select>
+          <button class="button">Dispatch · 60 min SLA</button>
+        </form>
+      {% endif %}
       <form method="post" action="{% url 'cart:status' order.id %}">{% csrf_token %}
         <select name="status">
           <option value="CONFIRMED">Confirm</option>

@@ -35,10 +35,24 @@ class OrderGroup(models.Model):
         return self.group_number
 
 
+class DeliveryAgent(models.Model):
+    name = models.CharField(max_length=120)
+    phone = models.CharField(max_length=10, validators=[phone_validator], unique=True)
+    vehicle_number = models.CharField(max_length=30, blank=True)
+    is_available = models.BooleanField(default=True, db_index=True)
+
+    class Meta:
+        ordering = ["name"]
+
+    def __str__(self):
+        return f"{self.name} ({self.phone})"
+
+
 class Order(models.Model):
     class Status(models.TextChoices):
         PLACED = "PLACED", "Placed"
         CONFIRMED = "CONFIRMED", "Confirmed"
+        DISPATCHED = "DISPATCHED", "Dispatched"
         OUT_FOR_DELIVERY = "OUT_FOR_DELIVERY", "Out for delivery"
         DELIVERED = "DELIVERED", "Delivered"
         CANCELLED = "CANCELLED", "Cancelled"
@@ -61,6 +75,11 @@ class Order(models.Model):
     customer_note = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    delivery_agent = models.ForeignKey(
+        DeliveryAgent, on_delete=models.SET_NULL, null=True, blank=True, related_name="orders"
+    )
+    dispatched_at = models.DateTimeField(null=True, blank=True)
+    estimated_delivery_time = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ["-created_at"]

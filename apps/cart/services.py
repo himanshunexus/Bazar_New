@@ -127,7 +127,8 @@ def place_order(user, cart, address_data, customer_note=""):
 
 ALLOWED_TRANSITIONS = {
     Order.Status.PLACED: {Order.Status.CONFIRMED, Order.Status.CANCELLED},
-    Order.Status.CONFIRMED: {Order.Status.OUT_FOR_DELIVERY, Order.Status.CANCELLED},
+    Order.Status.CONFIRMED: {Order.Status.DISPATCHED, Order.Status.OUT_FOR_DELIVERY, Order.Status.CANCELLED},
+    Order.Status.DISPATCHED: {Order.Status.OUT_FOR_DELIVERY, Order.Status.DELIVERED},
     Order.Status.OUT_FOR_DELIVERY: {Order.Status.DELIVERED},
     Order.Status.DELIVERED: set(),
     Order.Status.CANCELLED: set(),
@@ -151,6 +152,9 @@ def transition_order(order, new_status, actor):
         if new_status == Order.Status.DELIVERED:
             locked.payment_status = Order.PaymentStatus.PAID
             locked.paid_at = timezone.now()
+            if locked.delivery_agent_id:
+                locked.delivery_agent.is_available = True
+                locked.delivery_agent.save(update_fields=["is_available"])
         locked.status = new_status
         locked.save(update_fields=["status", "payment_status", "paid_at", "updated_at"])
         return locked

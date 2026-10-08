@@ -1,9 +1,20 @@
 {% extends "base.html" %}
+{% load static %}
 {% load money %}
+{% block head %}<script src="{% static 'js/order-tracking.js' %}" defer></script>{% endblock %}
 {% block content %}
 <section class="section narrow">
   <div class="section-head"><div><p class="eyebrow">{{ order.order_number }}</p><h1>{{ order.shop.name }}</h1></div><span class="badge {% if order.status == 'DELIVERED' %}success{% else %}warning{% endif %}">{{ order.get_status_display }}</span></div>
   <article class="card order-detail-card">
+    {% if order.delivery_agent %}
+      <div class="delivery-tracking" data-estimated-delivery="{{ order.estimated_delivery_time|date:'c' }}">
+        <p class="eyebrow">Live delivery tracking</p>
+        <h2>{{ order.delivery_agent.name }} is on the way</h2>
+        <p class="muted">Partner: {{ order.delivery_agent.phone }}{% if order.delivery_agent.vehicle_number %} · {{ order.delivery_agent.vehicle_number }}{% endif %}</p>
+        <div class="countdown-card"><span>Estimated arrival</span><strong id="delivery-countdown">Calculating…</strong></div>
+        <p class="arrival-alert" id="arrival-alert" hidden>⚡ Rider is nearby! Arriving within 10 minutes</p>
+      </div>
+    {% endif %}
     {% for item in order.items.all %}<div class="row"><span>{{ item.product_name }} × {{ item.quantity }}</span><strong>{{ item.line_total|inr }}</strong></div>{% endfor %}
     <div class="order-total"><span>Total · Cash on Delivery</span><strong>{{ order.total|inr }}</strong></div>
     <p class="muted">Placed {{ order.created_at|date:"d M Y, h:i A" }} · Delivered to {{ order.group.delivery_city }} {{ order.group.delivery_pincode }}</p>
