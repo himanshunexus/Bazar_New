@@ -128,9 +128,9 @@ label { display: block; margin: .8rem 0 .3rem; font-weight: 700; font-size: 12px
 }
 .hero h1 { max-width: 650px; margin: .25rem 0; color: var(--primary); font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1.08; letter-spacing: -.05em; }
 .eyebrow { margin: 0; color: var(--primary-container); font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
-.search { position: relative; }
-.search::before { position: absolute; left: .85rem; top: .75rem; content: "⌕"; color: var(--muted); font-size: 20px; }
-.search input { padding-left: 2.25rem; background: var(--surface); }
+.search, .search-container { position: relative; }
+.search::before, .search-container::before { position: absolute; left: 14px; top: 50%; z-index: 1; transform: translateY(-50%); content: "⌕"; color: var(--muted); font-size: 20px; line-height: 1; pointer-events: none; }
+.search input, .search-container input { padding-left: 42px !important; background: var(--surface); }
 .section { margin: 2rem 0; }
 .narrow { width: min(680px, 100%); margin-right: auto; margin-left: auto; }
 .section-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: .8rem; }
