@@ -3,9 +3,9 @@
 {% block content %}
 <section class="section">
   <h1>Categories</h1>
-  <div class="grid compact">
+  <div class="grid compact category-grid">
   {% for category in categories %}
-    <a class="tile" href="{% url 'shops:category' category.slug %}"><span>{{ category.icon }}</span>{{ category.name }}</a>
+    <a class="tile category-tile" href="{% url 'shops:category' category.slug %}"><span>{{ category.icon }}</span><strong>{{ category.name }}</strong><small>Explore nearby shops →</small></a>
   {% empty %}<p>No categories yet.</p>{% endfor %}
   </div>
 </section>

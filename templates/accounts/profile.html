@@ -1,7 +1,30 @@
 {% extends "base.html" %}
 {% block content %}
 <section class="section">
-  <div class="section-head"><h1>Profile</h1><a class="button" href="{% url 'accounts:address_new' %}">Add address</a></div>
-  {% for address in addresses %}<article class="card"><h2>{{ address.label }}</h2><p>{{ address.single_line }}</p><a href="{% url 'accounts:address_edit' address.id %}">Edit</a></article>{% empty %}<p>No addresses saved.</p>{% endfor %}
+  <div class="section-head"><div><p class="eyebrow">Account centre</p><h1>Profile</h1></div><a class="button" href="{% url 'accounts:address_new' %}">＋ Add Address</a></div>
+  <div class="profile-grid">
+    <article class="card account-card">
+      <p class="eyebrow">Your details</p>
+      <dl class="account-details">
+        <div><dt>Name</dt><dd>{{ request.user.get_full_name|default:request.user.username }}</dd></div>
+        <div><dt>Email</dt><dd>{{ request.user.email }}</dd></div>
+        <div><dt>Phone</dt><dd>{{ request.user.phone|default:"Not added yet" }}</dd></div>
+      </dl>
+    </article>
+    <div class="address-list">
+      <div class="section-head compact-head"><h2>Saved addresses</h2><span class="muted">{{ addresses|length }} saved</span></div>
+      {% for address in addresses %}
+        <article class="card address-card{% if address.is_default %} is-default{% endif %}">
+          <div class="address-heading"><h2>{{ address.label }}</h2>{% if address.is_default %}<span class="badge success">Primary Default</span>{% endif %}</div>
+          <p>{{ address.full_name }} · {{ address.phone }}</p><p>{{ address.single_line }}</p>
+          <div class="action-row">
+            <a class="button secondary" href="{% url 'accounts:address_edit' address.id %}">Edit</a>
+            {% if not address.is_default %}<form method="post" action="{% url 'accounts:address_default' address.id %}">{% csrf_token %}<button class="button secondary">Set Default</button></form>{% endif %}
+            <form method="post" action="{% url 'accounts:address_delete' address.id %}" onsubmit="return confirm('Delete this address?')">{% csrf_token %}<button class="button danger-outline">Delete</button></form>
+          </div>
+        </article>
+      {% empty %}<div class="empty-state compact-empty"><div class="empty-icon">⌂</div><h2>No saved addresses</h2><p>Add a delivery address to check out faster.</p><a class="button" href="{% url 'accounts:address_new' %}">Add Address</a></div>{% endfor %}
+    </div>
+  </div>
 </section>
 {% endblock %}

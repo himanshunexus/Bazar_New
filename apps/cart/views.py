@@ -81,6 +81,24 @@ def order_history(request):
     return render(request, "cart/history.html", {"orders": orders})
 
 
+@login_required
+def order_detail(request, pk):
+    order = get_object_or_404(request.user.orders.select_related("shop").prefetch_related("items"), pk=pk)
+    return render(request, "cart/order_detail.html", {"order": order})
+
+
+@login_required
+@require_http_methods(["POST"])
+def reorder(request, pk):
+    order = get_object_or_404(request.user.orders.prefetch_related("items__product"), pk=pk)
+    cart = Cart(request)
+    for item in order.items.all():
+        if item.product and item.product.is_active and item.product.stock > 0:
+            cart.add(item.product_id, min(item.quantity, item.product.stock))
+    messages.success(request, "Available items from this order were added to your cart.")
+    return redirect("cart:detail")
+
+
 @seller_required
 def seller_orders(request):
     orders = request.user.shop.orders.prefetch_related("items").select_related("customer").all()

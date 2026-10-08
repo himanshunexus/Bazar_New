@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load money %}
+{% block content %}
+<section class="section narrow">
+  <div class="section-head"><div><p class="eyebrow">{{ order.order_number }}</p><h1>{{ order.shop.name }}</h1></div><span class="badge {% if order.status == 'DELIVERED' %}success{% else %}warning{% endif %}">{{ order.get_status_display }}</span></div>
+  <article class="card order-detail-card">
+    {% for item in order.items.all %}<div class="row"><span>{{ item.product_name }} × {{ item.quantity }}</span><strong>{{ item.line_total|inr }}</strong></div>{% endfor %}
+    <div class="order-total"><span>Total · Cash on Delivery</span><strong>{{ order.total|inr }}</strong></div>
+    <p class="muted">Placed {{ order.created_at|date:"d M Y, h:i A" }} · Delivered to {{ order.group.delivery_city }} {{ order.group.delivery_pincode }}</p>
+    <form method="post" action="{% url 'cart:reorder' order.pk %}">{% csrf_token %}<button class="button">Reorder available items</button></form>
+  </article>
+</section>
+{% endblock %}
