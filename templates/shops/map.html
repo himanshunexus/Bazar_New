@@ -7,45 +7,157 @@
 <section class="section">
   <div class="section-head"><div><p class="eyebrow">Local commerce, mapped</p><h1>Shop Map</h1></div><span class="muted">Within your delivery radius</span></div>
   <div class="map-shell">
+    <form class="map-location-bar" id="pincode-form" novalidate>
+      <label class="sr-only" for="pincode-input">Delivery pincode</label>
+      <input id="pincode-input" name="pincode" inputmode="numeric" autocomplete="postal-code" maxlength="6" pattern="[0-9]{6}" placeholder="Enter 6-digit pincode" value="{{ saved_pincode }}">
+      <button class="button" id="locate-button" type="submit"><span class="button-label">Locate</span><span class="button-spinner" aria-hidden="true"></span></button>
+      <button class="button secondary gps-button" id="gps-button" type="button">Use my location</button>
+    </form>
+    <p class="map-status" id="map-status" role="status" aria-live="polite"></p>
     <div class="map-filters" role="toolbar" aria-label="Filter shops by category"><button class="filter-chip active" data-category="all">All shops</button></div>
     <div id="map"></div>
     <p class="map-fallback" hidden>Map tiles are temporarily unavailable. Shop markers are still listed in the map area; try refreshing shortly.</p>
   </div>
 </section>
 <script>
-  const center = [{{ DEFAULT_LAT }}, {{ DEFAULT_LNG }}];
+  const fallbackCenter = [{{ DEFAULT_LAT }}, {{ DEFAULT_LNG }}];
+  const savedAddress = {
+    pincode: "{{ saved_pincode|escapejs }}",
+    lat: "{{ saved_latitude|escapejs }}",
+    lng: "{{ saved_longitude|escapejs }}"
+  };
+  const apiUrl = "{% url 'shops_api:shop_map_api' %}";
+  const geocodeUrl = "https://nominatim.openstreetmap.org/search";
+  const form = document.getElementById("pincode-form");
+  const pincodeInput = document.getElementById("pincode-input");
+  const locateButton = document.getElementById("locate-button");
+  const gpsButton = document.getElementById("gps-button");
+  const status = document.getElementById("map-status");
+  const filterBar = document.querySelector(".map-filters");
+  const center = savedAddress.lat && savedAddress.lng
+    ? [Number(savedAddress.lat), Number(savedAddress.lng)]
+    : fallbackCenter;
   const map = L.map('map').setView(center, 13);
   const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {maxZoom: 19, attribution: '&copy; OpenStreetMap contributors, Tiles style by HOT'}).addTo(map);
   tileLayer.on('tileerror', () => document.querySelector('.map-fallback').hidden = false);
-  let shopLayer;
-  fetch("{% url 'shops:geojson' %}").then(r => r.json()).then(data => {
-    const filterBar = document.querySelector('.map-filters');
-    [...new Set(data.features.map(feature => feature.properties.category).filter(Boolean))].sort().forEach(category => {
-      const button = document.createElement('button');
-      button.className = 'filter-chip';
+  const markersGroup = L.layerGroup().addTo(map);
+  let shops = [];
+
+  function escapeHtml(value) {
+    return String(value || "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[char]);
+  }
+
+  function setLoading(isLoading, label) {
+    locateButton.disabled = isLoading;
+    gpsButton.disabled = isLoading;
+    locateButton.querySelector(".button-label").textContent = label || "Locate";
+    locateButton.classList.toggle("is-loading", isLoading);
+  }
+
+  function showStatus(message, isError = false) {
+    status.textContent = message;
+    status.classList.toggle("error", isError);
+  }
+
+  function renderMarkers(category = "all") {
+    markersGroup.clearLayers();
+    shops.filter(shop => category === "all" || shop.category === category).forEach(shop => {
+      const marker = L.marker([shop.latitude, shop.longitude]);
+      const distance = shop.distance_m == null ? "" : `<br><span>${(shop.distance_m / 1000).toFixed(1)} km away</span>`;
+      marker.bindPopup(`<strong>${escapeHtml(shop.name)}</strong><br><span>${escapeHtml(shop.category)}</span>${distance}<br><small>${escapeHtml(shop.address)}</small><br><a class="map-store-link" href="${escapeHtml(shop.url)}">View Store</a>`);
+      marker.addTo(markersGroup);
+    });
+  }
+
+  function updateFilters() {
+    filterBar.querySelectorAll(".filter-chip:not([data-category='all'])").forEach(button => button.remove());
+    [...new Set(shops.map(shop => shop.category).filter(Boolean))].sort().forEach(category => {
+      const button = document.createElement("button");
+      button.className = "filter-chip";
       button.dataset.category = category;
       button.textContent = category;
       filterBar.appendChild(button);
     });
-    shopLayer = L.geoJSON(data, {
-      filter: () => true,
-      onEachFeature: (feature, layer) => {
-        const p = feature.properties;
-        layer.bindPopup(`<strong>${p.name}</strong><br>${p.hours}<br><a href="${p.url}">Open shop</a><br><a href="${p.directions}">Directions</a>`);
-      }
-    }).addTo(map);
-    filterBar.querySelectorAll('.filter-chip').forEach(button => button.addEventListener('click', () => {
-      document.querySelectorAll('.filter-chip').forEach(item => item.classList.remove('active'));
-      button.classList.add('active');
-      const category = button.dataset.category;
-      shopLayer.clearLayers();
-      L.geoJSON(data, {filter: feature => category === 'all' || feature.properties.category === category, onEachFeature: (feature, layer) => {
-        const p = feature.properties;
-        layer.bindPopup(`<strong>${p.name}</strong><br>${p.hours}<br><a href="${p.url}">Open shop</a><br><a href="${p.directions}">Directions</a>`);
-      }}).addTo(shopLayer);
+    filterBar.querySelectorAll(".filter-chip").forEach(button => button.addEventListener("click", () => {
+      filterBar.querySelectorAll(".filter-chip").forEach(item => item.classList.remove("active"));
+      button.classList.add("active");
+      renderMarkers(button.dataset.category);
     }));
-  }).catch(() => {
-    document.querySelector('.map-fallback').hidden = false;
+  }
+
+  async function fetchShops(pincode, lat, lng) {
+    const params = new URLSearchParams({ pincode, lat, lng });
+    const response = await fetch(`${apiUrl}?${params}`);
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Unable to load nearby shops.");
+    shops = data;
+    updateFilters();
+    renderMarkers();
+    showStatus(shops.length ? `${shops.length} nearby shop${shops.length === 1 ? "" : "s"} found.` : "No active shops found for this area.");
+  }
+
+  async function locatePincode(pincode, coordinates = null) {
+    if (!/^\d{6}$/.test(pincode)) {
+      showStatus("Enter a valid 6-digit Indian pincode.", true);
+      pincodeInput.focus();
+      return;
+    }
+    setLoading(true, "Locating…");
+    try {
+      let lat;
+      let lng;
+      if (coordinates) {
+        [lat, lng] = coordinates;
+      } else {
+        const response = await fetch(`${geocodeUrl}?postalcode=${pincode}&country=India&format=json&limit=1`, { headers: { "Accept-Language": "en" } });
+        const results = await response.json();
+        if (!results.length) throw new Error("We could not find that pincode. Check the number and try again.");
+        lat = Number(results[0].lat);
+        lng = Number(results[0].lon);
+      }
+      map.flyTo([lat, lng], 14, { duration: 1.2 });
+      localStorage.setItem("bazar_pincode", pincode);
+      await fetchShops(pincode, lat, lng);
+    } catch (error) {
+      showStatus(error.message || "Unable to locate this pincode right now.", true);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  form.addEventListener("submit", event => {
+    event.preventDefault();
+    locatePincode(pincodeInput.value.trim());
   });
+
+  gpsButton.addEventListener("click", () => {
+    if (!navigator.geolocation) {
+      showStatus("Location services are not available in this browser.", true);
+      return;
+    }
+    setLoading(true, "Finding…");
+    navigator.geolocation.getCurrentPosition(async position => {
+      try {
+        map.flyTo([position.coords.latitude, position.coords.longitude], 14, { duration: 1.2 });
+        await fetchShops("", position.coords.latitude, position.coords.longitude);
+      } catch (error) {
+        showStatus(error.message || "Unable to load shops near you.", true);
+      } finally {
+        setLoading(false);
+      }
+    }, () => {
+      setLoading(false);
+      showStatus("We could not access your location. Enter a pincode instead.", true);
+    }, { enableHighAccuracy: false, timeout: 10000 });
+  });
+
+  const storedPincode = localStorage.getItem("bazar_pincode");
+  const initialPincode = savedAddress.pincode || storedPincode;
+  if (initialPincode) {
+    pincodeInput.value = initialPincode;
+    locatePincode(initialPincode, savedAddress.lat && savedAddress.lng ? center : null);
+  } else {
+    fetchShops("", center[0], center[1]).catch(error => showStatus(error.message, true));
+  }
 </script>
 {% endblock %}

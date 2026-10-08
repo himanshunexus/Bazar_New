@@ -34,7 +34,73 @@ def detail(request, slug):
 
 
 def map_view(request):
-    return render(request, "shops/map.html", {"categories": ShopCategory.objects.all()})
+    saved_pincode = ""
+    saved_latitude = ""
+    saved_longitude = ""
+    if request.user.is_authenticated:
+        address = request.user.addresses.filter(is_default=True).first()
+        if address:
+            saved_pincode = address.pincode
+            saved_latitude = address.latitude or ""
+            saved_longitude = address.longitude or ""
+    return render(
+        request,
+        "shops/map.html",
+        {
+            "categories": ShopCategory.objects.all(),
+            "saved_pincode": saved_pincode,
+            "saved_latitude": saved_latitude,
+            "saved_longitude": saved_longitude,
+        },
+    )
+
+
+def shop_map_api(request):
+    pincode = (request.GET.get("pincode") or "").strip()
+    try:
+        lat = float(request.GET["lat"]) if request.GET.get("lat") else None
+        lng = float(request.GET["lng"]) if request.GET.get("lng") else None
+    except (TypeError, ValueError):
+        return JsonResponse({"error": "Invalid map coordinates."}, status=400)
+
+    if pincode and (len(pincode) != 6 or not pincode.isdigit()):
+        return JsonResponse({"error": "Enter a valid 6-digit Indian pincode."}, status=400)
+
+    if pincode:
+        shops = list(Shop.objects.active().select_related("category").filter(pincode=pincode))
+        if not shops and lat is not None and lng is not None:
+            shops = Shop.objects.active().nearby(lat, lng, settings.DEFAULT_RADIUS_KM)
+        if lat is not None and lng is not None:
+            nearby = Shop.objects.active().nearby(lat, lng, settings.DEFAULT_RADIUS_KM)
+            nearby_by_id = {shop.id: shop for shop in nearby}
+            for shop in shops:
+                if shop.id in nearby_by_id:
+                    shop.distance_m = nearby_by_id[shop.id].distance_m
+        shops.sort(key=lambda shop: getattr(shop, "distance_m", float("inf")))
+    elif lat is not None and lng is not None:
+        shops = Shop.objects.active().nearby(lat, lng, settings.DEFAULT_RADIUS_KM)
+    else:
+        shops = Shop.objects.active().select_related("category").filter(
+            latitude__isnull=False, longitude__isnull=False
+        )
+
+    return JsonResponse(
+        [
+            {
+                "id": shop.id,
+                "name": shop.name,
+                "latitude": float(shop.latitude),
+                "longitude": float(shop.longitude),
+                "category": shop.category.name,
+                "address": f"{shop.address}, {shop.city} {shop.pincode}",
+                "distance_m": getattr(shop, "distance_m", None),
+                "url": shop.get_absolute_url(),
+            }
+            for shop in shops
+            if shop.latitude is not None and shop.longitude is not None
+        ],
+        safe=False,
+    )
 
 
 def geojson(request):
