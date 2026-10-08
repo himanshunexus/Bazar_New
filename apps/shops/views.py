@@ -34,13 +34,13 @@ def detail(request, slug):
 
 
 def map_view(request):
-    saved_pincode = ""
+    user_pincode = "391760"
     saved_latitude = ""
     saved_longitude = ""
     if request.user.is_authenticated:
         address = request.user.addresses.filter(is_default=True).first()
         if address:
-            saved_pincode = address.pincode
+            user_pincode = address.pincode or user_pincode
             saved_latitude = address.latitude or ""
             saved_longitude = address.longitude or ""
     return render(
@@ -48,7 +48,7 @@ def map_view(request):
         "shops/map.html",
         {
             "categories": ShopCategory.objects.all(),
-            "saved_pincode": saved_pincode,
+            "user_pincode": user_pincode,
             "saved_latitude": saved_latitude,
             "saved_longitude": saved_longitude,
         },
