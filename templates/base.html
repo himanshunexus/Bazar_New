@@ -20,7 +20,7 @@
         {% if request.user.is_seller %}<a href="{% url 'core:seller_dashboard' %}">Seller</a>{% endif %}
         <a href="{% url 'cart:history' %}">Orders</a>
         <a href="{% url 'accounts:profile' %}">Profile</a>
-        <form method="post" action="{% url 'accounts:logout' %}">{% csrf_token %}<button>Logout</button></form>
+        <form class="logout-form" method="post" action="{% url 'accounts:logout' %}">{% csrf_token %}<button class="button subtle">Logout</button></form>
       {% else %}
         <a href="{% url 'accounts:login' %}">Login</a>
         <a class="button" href="{% url 'accounts:register' %}">Register</a>
@@ -34,12 +34,12 @@
   <footer class="site-footer">
     <div class="footer-grid">
       <div>
-        <h3>BAZAR <span class="button" style="min-height:auto;padding:.2rem .35rem;font-size:10px">Hyperlocal</span></h3>
+        <h3>BAZAR <span class="footer-pill">Hyperlocal</span></h3>
         <p>Connecting neighbourhood kiranas, bakeries, dairy producers and local vendors directly to local households.</p>
       </div>
-      <div><h3>Neighbourhood focus</h3><a href="{% url 'shops:categories' %}">All shops</a><br><a href="{% url 'shops:map' %}">Interactive store map</a><br><a href="{% url 'shops:categories' %}">Daily essentials</a></div>
+      <div><h3>Neighbourhood focus</h3><a href="{% url 'shops:categories' %}">All shops</a><a href="{% url 'shops:map' %}">Interactive store map</a><a href="{% url 'shops:categories' %}">Daily essentials</a></div>
       <div><h3>Payment & trust</h3><p>100% Cash on Delivery. Pay at your doorstep after checking your fresh items.</p></div>
-      <div><h3>For merchants</h3><p>Are you a local shop owner?</p><a class="button" href="{% url 'accounts:register' %}?role=seller">Join BAZAR Seller</a></div>
+      <div><h3>For merchants</h3><p>Are you a local shop owner?</p><a class="button seller-cta" href="{% url 'accounts:register' %}?role=seller">Join BAZAR Seller</a></div>
     </div>
     <div class="footer-bottom"><span>© 2025 BAZAR Technologies India Pvt. Ltd.</span><span>FSSAI & Retail Compliance · Consumer Grievance · Privacy Policy</span></div>
   </footer>

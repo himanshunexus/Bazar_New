@@ -61,3 +61,22 @@ def address_upsert(request, pk=None):
         messages.success(request, "Address saved.")
         return redirect("accounts:profile")
     return render(request, "accounts/address_form.html", {"form": form, "address": address})
+
+
+@login_required
+@require_http_methods(["POST"])
+def address_set_default(request, pk):
+    address = get_object_or_404(Address, pk=pk, user=request.user)
+    address.is_default = True
+    address.save(update_fields=["is_default", "updated_at"])
+    messages.success(request, "Default address updated.")
+    return redirect("accounts:profile")
+
+
+@login_required
+@require_http_methods(["POST"])
+def address_delete(request, pk):
+    address = get_object_or_404(Address, pk=pk, user=request.user)
+    address.delete()
+    messages.success(request, "Address deleted.")
+    return redirect("accounts:profile")

@@ -11,7 +11,15 @@
       {% endfor %}
       <p>Subtotal {{ group.subtotal|inr }}</p>
     </article>
-  {% empty %}<p>Your cart is empty.</p>{% endfor %}
+  {% empty %}
+    <div class="empty-state">
+      <div class="empty-icon">🛒</div>
+      <p class="eyebrow">Your cart is waiting</p>
+      <h2>Your cart is empty</h2>
+      <p>Browse trusted neighbourhood shops and add everyday essentials to your COD cart.</p>
+      <a class="button" href="{% url 'shops:categories' %}">Explore Categories</a>
+    </div>
+  {% endfor %}
   {% if cart|length %}<a class="button" href="{% url 'cart:checkout' %}">Checkout</a>{% endif %}
 </section>
 {% endblock %}

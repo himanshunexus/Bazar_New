@@ -34,7 +34,7 @@ def detail(request, slug):
 
 
 def map_view(request):
-    return render(request, "shops/map.html")
+    return render(request, "shops/map.html", {"categories": ShopCategory.objects.all()})
 
 
 def geojson(request):
@@ -54,6 +54,7 @@ def geojson(request):
                 "properties": {
                     "id": shop.id,
                     "name": shop.name,
+                    "category": shop.category.name,
                     "hours": f"{shop.opening_time:%H:%M} - {shop.closing_time:%H:%M}",
                     "distance_m": distance,
                     "url": shop.get_absolute_url(),

@@ -3,6 +3,12 @@
 {% block content %}
 <section class="section">
   <h1>Orders</h1>
-  {% for order in orders %}<article class="card"><h2>{{ order.order_number }}</h2><p>{{ order.shop.name }} · {{ order.status }} · {{ order.total|inr }}</p></article>{% empty %}<p>No orders yet.</p>{% endfor %}
+  {% for order in orders %}
+    <article class="card order-card" id="order-{{ order.pk }}">
+      <div class="order-card-top"><div><p class="eyebrow">{{ order.order_number }}</p><h2>{{ order.shop.name }}</h2></div><span class="badge {% if order.status == 'DELIVERED' %}success{% elif order.status == 'CANCELLED' %}danger{% else %}warning{% endif %}">{{ order.get_status_display }}</span></div>
+      <div class="order-meta"><span>{{ order.created_at|date:"d M Y, h:i A" }}</span><span>{{ order.items.all|length }} item{{ order.items.all|length|pluralize }}</span><strong>{{ order.total|inr }}</strong></div>
+      <div class="action-row"><a class="button secondary" href="{% url 'cart:order_detail' order.pk %}">View Details</a>{% if order.status != 'DELIVERED' and order.status != 'CANCELLED' %}<a class="button secondary" href="{% url 'cart:history' %}#order-{{ order.pk }}">Track Order</a>{% endif %}<form method="post" action="{% url 'cart:reorder' order.pk %}">{% csrf_token %}<button class="button">Reorder</button></form></div>
+    </article>
+  {% empty %}<div class="empty-state"><div class="empty-icon">▣</div><h2>No orders yet</h2><p>Your completed and active orders will appear here.</p><a class="button" href="{% url 'shops:categories' %}">Start Shopping</a></div>{% endfor %}
 </section>
 {% endblock %}

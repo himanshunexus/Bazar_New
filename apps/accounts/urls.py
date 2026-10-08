@@ -11,4 +11,6 @@ urlpatterns = [
     path("profile/", views.profile, name="profile"),
     path("addresses/new/", views.address_upsert, name="address_new"),
     path("addresses/<int:pk>/", views.address_upsert, name="address_edit"),
+    path("addresses/<int:pk>/default/", views.address_set_default, name="address_default"),
+    path("addresses/<int:pk>/delete/", views.address_delete, name="address_delete"),
 ]
