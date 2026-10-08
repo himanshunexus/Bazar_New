@@ -1,0 +1,183 @@
+(() => {
+  function initializeShopMap() {
+    const mapElement = document.getElementById("map");
+    if (!mapElement || typeof L === "undefined") return;
+
+    const fallbackCenter = [
+      Number(mapElement.dataset.defaultLat),
+      Number(mapElement.dataset.defaultLng),
+    ];
+    const savedAddress = {
+      pincode: mapElement.dataset.userPincode || "",
+      lat: mapElement.dataset.savedLat || "",
+      lng: mapElement.dataset.savedLng || "",
+    };
+    const form = document.getElementById("pincode-form");
+    const pincodeInput = document.getElementById("pincode-input");
+    const locateButton = document.getElementById("locate-button");
+    const gpsButton = document.getElementById("gps-button");
+    const status = document.getElementById("map-status");
+    const filterBar = document.querySelector(".map-filters");
+    const initialCenter = savedAddress.lat && savedAddress.lng
+      ? [Number(savedAddress.lat), Number(savedAddress.lng)]
+      : fallbackCenter;
+    const map = L.map(mapElement).setView(initialCenter, 13);
+    const tileLayer = L.tileLayer(
+      "https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
+      { maxZoom: 19, attribution: "&copy; OpenStreetMap contributors, Tiles style by HOT" },
+    ).addTo(map);
+    tileLayer.on("tileerror", () => {
+      document.querySelector(".map-fallback").hidden = false;
+    });
+
+    const markersGroup = L.layerGroup().addTo(map);
+    let shops = [];
+
+    function escapeHtml(value) {
+      return String(value || "").replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;",
+      }[char]));
+    }
+
+    function setLoading(isLoading, label = "Locate") {
+      locateButton.disabled = isLoading;
+      gpsButton.disabled = isLoading;
+      locateButton.querySelector(".button-label").textContent = label;
+      locateButton.classList.toggle("is-loading", isLoading);
+    }
+
+    function showStatus(message, isError = false) {
+      status.textContent = message;
+      status.classList.toggle("error", isError);
+    }
+
+    function renderMarkers(category = "all") {
+      markersGroup.clearLayers();
+      shops
+        .filter((shop) => category === "all" || shop.category === category)
+        .forEach((shop) => {
+          const marker = L.marker([shop.latitude, shop.longitude]);
+          const distance = shop.distance_m == null
+            ? ""
+            : `<br><span>${(shop.distance_m / 1000).toFixed(1)} km away</span>`;
+          marker.bindPopup(
+            `<strong>${escapeHtml(shop.name)}</strong><br><span>${escapeHtml(shop.category)}</span>` +
+            `${distance}<br><small>${escapeHtml(shop.address)}</small>` +
+            `<br><a class="map-store-link" href="${escapeHtml(shop.url)}">View Store</a>`,
+          );
+          marker.addTo(markersGroup);
+        });
+    }
+
+    function updateFilters() {
+      filterBar.querySelectorAll(".filter-chip:not([data-category='all'])")
+        .forEach((button) => button.remove());
+      [...new Set(shops.map((shop) => shop.category).filter(Boolean))]
+        .sort()
+        .forEach((category) => {
+          const button = document.createElement("button");
+          button.className = "filter-chip";
+          button.dataset.category = category;
+          button.textContent = category;
+          filterBar.appendChild(button);
+        });
+      filterBar.querySelectorAll(".filter-chip").forEach((button) => {
+        button.addEventListener("click", () => {
+          filterBar.querySelectorAll(".filter-chip")
+            .forEach((item) => item.classList.remove("active"));
+          button.classList.add("active");
+          renderMarkers(button.dataset.category);
+        });
+      });
+    }
+
+    async function fetchShops(pincode, lat, lng) {
+      const params = new URLSearchParams({ pincode, lat, lng });
+      const response = await fetch(`/api/shops/?${params}`);
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Unable to load nearby shops.");
+      shops = data;
+      updateFilters();
+      renderMarkers();
+      showStatus(shops.length
+        ? `${shops.length} nearby shop${shops.length === 1 ? "" : "s"} found.`
+        : "No active shops found for this area.");
+    }
+
+    async function locatePincode(pincode, coordinates = null) {
+      if (!/^\d{6}$/.test(pincode)) {
+        showStatus("Enter a valid 6-digit Indian pincode.", true);
+        pincodeInput.focus();
+        return;
+      }
+      setLoading(true, "Locating...");
+      try {
+        let lat;
+        let lng;
+        if (coordinates) {
+          [lat, lng] = coordinates;
+        } else {
+          const query = new URLSearchParams({
+            postalcode: pincode,
+            country: "India",
+            format: "json",
+            limit: "1",
+          });
+          const response = await fetch(`https://nominatim.openstreetmap.org/search?${query}`, {
+            headers: { "Accept-Language": "en" },
+          });
+          const results = await response.json();
+          if (!results.length) {
+            throw new Error("We could not find that pincode. Check the number and try again.");
+          }
+          lat = Number(results[0].lat);
+          lng = Number(results[0].lon);
+        }
+        map.flyTo([lat, lng], 14, { duration: 1.2 });
+        localStorage.setItem("bazar_pincode", pincode);
+        await fetchShops(pincode, lat, lng);
+      } catch (error) {
+        showStatus(error.message || "Unable to locate this pincode right now.", true);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      locatePincode(pincodeInput.value.trim());
+    });
+
+    gpsButton.addEventListener("click", () => {
+      if (!navigator.geolocation) {
+        showStatus("Location services are not available in this browser.", true);
+        return;
+      }
+      setLoading(true, "Finding...");
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          map.flyTo([latitude, longitude], 14, { duration: 1.2 });
+          await fetchShops("", latitude, longitude);
+        } catch (error) {
+          showStatus(error.message || "Unable to load shops near you.", true);
+        } finally {
+          setLoading(false);
+        }
+      }, () => {
+        setLoading(false);
+        showStatus("We could not access your location. Enter a pincode instead.", true);
+      }, { enableHighAccuracy: false, timeout: 10000 });
+    });
+
+    const storedPincode = localStorage.getItem("bazar_pincode");
+    const initialPincode = savedAddress.pincode || storedPincode || "391760";
+    pincodeInput.value = initialPincode;
+    locatePincode(
+      initialPincode,
+      savedAddress.lat && savedAddress.lng ? initialCenter : null,
+    );
+  }
+
+  document.addEventListener("DOMContentLoaded", initializeShopMap);
+})();
