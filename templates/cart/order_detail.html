@@ -4,6 +4,7 @@
 <section class="section narrow">
   <div class="section-head"><div><p class="eyebrow">{{ order.order_number }}</p><h1>Order details</h1><p class="muted">{{ order.shop.name }}</p></div><span class="badge {% if order.status == 'DELIVERED' %}success{% elif order.status == 'CANCELLED' %}danger{% else %}warning{% endif %}">{{ order.get_status_display }}</span></div>
   <article class="card order-detail-card">
+    {% if order.cancellation_reason %}<div class="notice danger" role="status"><h2>We’re sorry — your order was cancelled</h2><p>{{ order.cancellation_reason }}</p><p>Shop: {{ order.shop.name }}, {{ order.shop.address }}, {{ order.shop.city }} {{ order.shop.pincode }}</p>{% if order.shop.latitude and order.shop.longitude %}<a href="https://www.google.com/maps/search/?api=1&query={{ order.shop.latitude }},{{ order.shop.longitude }}" target="_blank" rel="noopener">Visit the shop</a>{% endif %}</div>{% endif %}
     <p><strong>Order status:</strong> {{ order.get_status_display }}{% if order.delivery_agent %} · Delivery partner: {{ order.delivery_agent.name }}{% endif %}</p>
     {% for item in order.items.all %}<div class="row"><span>{{ item.product_name }} × {{ item.quantity }}</span><strong>{{ item.line_total|inr }}</strong></div>{% endfor %}
     <div class="order-total"><span>Total · Cash on Delivery</span><strong>{{ order.total|inr }}</strong></div>

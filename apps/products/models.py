@@ -77,6 +77,7 @@ def validate_product_image(file_obj):
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="images")
     image = CloudinaryField("product image", validators=[validate_product_image])
+    source_url = models.URLField(max_length=500, blank=True)
     position = models.PositiveSmallIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 

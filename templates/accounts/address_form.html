@@ -1,7 +1,9 @@
 {% extends "base.html" %}
+{% load static %}
+{% block head %}<script src="{% static 'js/location-autofill.js' %}" defer></script>{% endblock %}
 {% block content %}
 <section class="section narrow">
   <h1>Address</h1>
-  <form method="post">{% csrf_token %}{{ form.as_p }}<button class="button">Save</button></form>
+  <form method="post" class="location-autofill-form">{% csrf_token %}{{ form.as_p }}<button class="button secondary" type="button" data-use-location>Use my current location</button><p class="muted" data-location-status role="status" aria-live="polite">Enter your pincode. We’ll request your location to set the map point.</p><button class="button">Save</button></form>
 </section>
 {% endblock %}

@@ -10,6 +10,6 @@ class CheckoutForm(forms.Form):
     line2 = forms.CharField(max_length=255, required=False)
     city = forms.CharField(max_length=120)
     pincode = forms.CharField(max_length=6, validators=[pincode_validator])
-    latitude = forms.DecimalField(max_digits=9, decimal_places=6, required=False)
-    longitude = forms.DecimalField(max_digits=9, decimal_places=6, required=False)
+    latitude = forms.DecimalField(max_digits=9, decimal_places=6, required=False, widget=forms.HiddenInput)
+    longitude = forms.DecimalField(max_digits=9, decimal_places=6, required=False, widget=forms.HiddenInput)
     customer_note = forms.CharField(widget=forms.Textarea(attrs={"rows": 3}), required=False)

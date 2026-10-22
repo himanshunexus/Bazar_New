@@ -29,4 +29,5 @@ if [[ "${SEED_ON_DEPLOY:-false}" == "true" ]]; then
     python manage.py seed_parul_data
     python manage.py seed_delivery_data
 fi
+python manage.py seed_product_images
 python manage.py lockdown_db

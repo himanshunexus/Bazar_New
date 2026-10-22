@@ -85,6 +85,7 @@ class Order(models.Model):
     )
     dispatched_at = models.DateTimeField(null=True, blank=True)
     estimated_delivery_time = models.DateTimeField(null=True, blank=True)
+    cancellation_reason = models.CharField(max_length=255, blank=True)
 
     class Meta:
         ordering = ["-created_at"]

@@ -14,6 +14,7 @@
   <div class="grid">
     {% for product in products %}
       <article class="card product">
+        {% with image=product.images.first %}{% if image %}<img class="product-card-image" src="{{ image.image.url }}" alt="{{ product.name }}" loading="lazy">{% endif %}{% endwith %}
         <h3><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h3>
         <p>{{ product.unit_label }} · {{ product.stock }} in stock</p>
         <strong>{{ product.price|inr }}</strong>

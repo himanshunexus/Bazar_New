@@ -17,8 +17,13 @@ def category_detail(request, slug):
     pincode = request.GET.get("pincode")
     if request.user.is_authenticated:
         address = request.user.addresses.filter(is_default=True).first()
-        if address:
-            pincode = address.pincode
+        if address and address.latitude is not None and address.longitude is not None:
+            nearby_ids = [shop.pk for shop in Shop.objects.active().nearby(address.latitude, address.longitude, 5)]
+            qs = qs.filter(pk__in=nearby_ids)
+            pincode = None
+        elif address:
+            qs = qs.none()
+            pincode = None
     if city:
         qs = qs.filter(city__iexact=city)
     if pincode:

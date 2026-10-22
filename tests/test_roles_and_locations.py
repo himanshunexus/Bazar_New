@@ -99,7 +99,7 @@ def test_rider_cannot_update_an_unassigned_order(customer, product):
     from django.core.exceptions import PermissionDenied
 
     group = place_order(customer, type("Cart", (), {"data": {str(product.id): 1}, "__len__": lambda self: 1, "clear": lambda self: None})(), {
-        "full_name": "Customer", "phone": "9876543211", "line1": "Home", "line2": "", "city": "Delhi", "pincode": "110001",
+        "full_name": "Customer", "phone": "9876543211", "line1": "Home", "line2": "", "city": "Delhi", "pincode": "110001", "latitude": "28.6139", "longitude": "77.2090",
     })
     rider = User.objects.create_user("rider-two", "rider2@example.com", password="pw", role=User.Role.RIDER)
     DeliveryAgent.objects.create(user=rider, name="Rider Two", phone="9876543213")
@@ -121,7 +121,7 @@ def test_track_order_link_opens_order_detail(client, customer, product):
             pass
 
     group = place_order(customer, Cart(), {
-        "full_name": "Customer", "phone": "9876543211", "line1": "Home", "line2": "", "city": "Delhi", "pincode": "110001",
+        "full_name": "Customer", "phone": "9876543211", "line1": "Home", "line2": "", "city": "Delhi", "pincode": "110001", "latitude": "28.6139", "longitude": "77.2090",
     })
     client.force_login(customer)
     response = client.get("/cart/orders/")

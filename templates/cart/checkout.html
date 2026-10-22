@@ -1,8 +1,10 @@
 {% extends "base.html" %}
+{% load static %}
+{% block head %}<script src="{% static 'js/location-autofill.js' %}" defer></script>{% endblock %}
 {% block content %}
 <section class="section narrow">
   <h1>Checkout</h1>
   <p class="payment-line">Payment: Cash on Delivery</p>
-  <form method="post">{% csrf_token %}{{ form.as_p }}<button class="button">Place COD order</button></form>
+  <form method="post" class="location-autofill-form">{% csrf_token %}{{ form.as_p }}<button class="button secondary" type="button" data-use-location>Use my current location</button><p class="muted" data-location-status role="status" aria-live="polite">Enter your pincode to check nearby delivery shops.</p><button class="button">Place COD order</button></form>
 </section>
 {% endblock %}

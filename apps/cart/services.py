@@ -1,4 +1,5 @@
 from collections import defaultdict
+from datetime import timedelta
 from decimal import Decimal
 
 from django.core.exceptions import PermissionDenied, ValidationError
@@ -7,12 +8,17 @@ from django.utils import timezone
 
 from apps.accounts.models import phone_validator, pincode_validator
 from apps.products.models import Product
+from apps.shops.models import Shop
 
 from .models import Order, OrderGroup, OrderItem, make_group_number, make_order_number
 
 
 class CheckoutError(ValidationError):
     pass
+
+
+DELIVERY_RADIUS_KM = 5
+NO_RIDER_CANCELLATION_REASON = "No rider was available within 5 minutes. Sorry for the inconvenience. You may contact or visit the shop."
 
 
 def _validate_address(data):
@@ -44,6 +50,15 @@ def place_order(user, cart, address_data, customer_note=""):
     if len(cart) == 0:
         raise CheckoutError("Your cart is empty.")
     _validate_address(address_data)
+    latitude, longitude = address_data.get("latitude"), address_data.get("longitude")
+    if latitude in (None, "") or longitude in (None, ""):
+        raise CheckoutError("Add your delivery location coordinates so we can confirm the shop is within our 5 km delivery range.")
+    try:
+        latitude, longitude = float(latitude), float(longitude)
+        if not -90 <= latitude <= 90 or not -180 <= longitude <= 180:
+            raise ValueError
+    except (TypeError, ValueError):
+        raise CheckoutError("Enter a valid delivery location to check the 5 km delivery range.")
 
     product_quantities = {int(product_id): int(qty) for product_id, qty in cart.data.items() if int(qty) > 0}
     if not product_quantities:
@@ -67,8 +82,13 @@ def place_order(user, cart, address_data, customer_note=""):
                 raise CheckoutError(f"{product.name} has only {product.stock} left.")
             grouped[product.shop].append((product, quantity))
 
+        nearby_shop_ids = {
+            nearby_shop.pk for nearby_shop in Shop.objects.active().nearby(latitude, longitude, DELIVERY_RADIUS_KM)
+        }
         shop_subtotals = {}
         for shop, lines in grouped.items():
+            if shop.pk not in nearby_shop_ids:
+                raise CheckoutError(f"{shop.name} is outside our 5 km delivery range. Remove its items to continue.")
             subtotal = sum((product.price * qty for product, qty in lines), Decimal("0.00"))
             if subtotal < shop.min_order_amount:
                 raise CheckoutError(f"{shop.name} requires a minimum order of Rs {shop.min_order_amount}.")
@@ -163,6 +183,37 @@ def transition_order(order, new_status, actor):
         locked.status = new_status
         locked.save(update_fields=["status", "payment_status", "paid_at", "updated_at"])
         return locked
+
+
+def cancel_unassigned_orders(now=None, order_id=None):
+    """Cancel unpaid orders that have had no rider assigned for five minutes."""
+    now = now or timezone.now()
+    cutoff = now - timedelta(minutes=5)
+    candidates = Order.objects.filter(
+        status__in=[Order.Status.PLACED, Order.Status.CONFIRMED],
+        delivery_agent__isnull=True,
+        created_at__lte=cutoff,
+    )
+    if order_id is not None:
+        candidates = candidates.filter(pk=order_id)
+
+    cancelled = 0
+    for candidate_id in candidates.values_list("pk", flat=True).iterator():
+        with transaction.atomic():
+            order = Order.objects.select_for_update().filter(pk=candidate_id).first()
+            if (
+                not order
+                or order.delivery_agent_id is not None
+                or order.status not in {Order.Status.PLACED, Order.Status.CONFIRMED}
+                or order.created_at > cutoff
+            ):
+                continue
+            _restore_stock(order)
+            order.status = Order.Status.CANCELLED
+            order.cancellation_reason = NO_RIDER_CANCELLATION_REASON
+            order.save(update_fields=["status", "cancellation_reason", "updated_at"])
+            cancelled += 1
+    return cancelled
 
 
 def _restore_stock(order):

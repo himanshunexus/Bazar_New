@@ -16,7 +16,7 @@ from apps.products.models import Product
 from .cart import Cart
 from .forms import CheckoutForm
 from .models import DeliveryAgent, Order
-from .services import CheckoutError, place_order, transition_order
+from .services import CheckoutError, cancel_unassigned_orders, place_order, transition_order
 
 phone_validator = RegexValidator(r"^\d{10}$", "Enter a 10-digit mobile number.")
 
@@ -91,6 +91,7 @@ def order_history(request):
 
 @login_required
 def order_detail(request, pk):
+    cancel_unassigned_orders(order_id=pk)
     order = get_object_or_404(
         request.user.orders.select_related("shop", "delivery_agent").prefetch_related("items"), pk=pk
     )
@@ -99,6 +100,7 @@ def order_detail(request, pk):
 
 @login_required
 def track_order(request, pk):
+    cancel_unassigned_orders(order_id=pk)
     order = get_object_or_404(
         request.user.orders.select_related("shop", "delivery_agent", "group").prefetch_related("items"), pk=pk
     )

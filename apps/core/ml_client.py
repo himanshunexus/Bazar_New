@@ -87,7 +87,7 @@ def hydrate_products(product_ids, lat=None, lng=None, radius_km=None, pincode=No
     from apps.shops.models import Shop
 
     product_ids = list(OrderedDict.fromkeys(product_ids))
-    qs = Product.objects.select_related("shop").filter(is_active=True, stock__gt=0, shop__is_active=True)
+    qs = Product.objects.select_related("shop").prefetch_related("images").filter(is_active=True, stock__gt=0, shop__is_active=True)
     if pincode:
         qs = qs.filter(shop__pincode=pincode)
         if product_ids:

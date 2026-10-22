@@ -10,7 +10,7 @@
   <div>
     <h2>Products</h2>
     {% for product in products %}
-      <a class="result" href="{{ product.get_absolute_url }}">{{ product.name }} <span>{{ product.price|inr }}</span></a>
+      <a class="result product-result" href="{{ product.get_absolute_url }}">{% with image=product.images.first %}{% if image %}<img src="{{ image.image.url }}" alt="{{ product.name }}" loading="lazy">{% endif %}{% endwith %}<span>{{ product.name }}<small>{{ product.price|inr }}</small></span></a>
     {% empty %}<p>No products matched.</p>{% endfor %}
   </div>
 </section>

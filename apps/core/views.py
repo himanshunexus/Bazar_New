@@ -34,13 +34,13 @@ def home(request):
         if not profile_pincode:
             lat, lng = settings.DEFAULT_LAT, settings.DEFAULT_LNG
     radius = request.GET.get("radius") or request.session.get("radius_km") or settings.DEFAULT_RADIUS_KM
-    if profile_pincode:
-        shops = list(Shop.objects.active().filter(pincode=profile_pincode).select_related("category")[:12])
+    if lat is not None and lng is not None:
+        shops = Shop.objects.active().nearby(lat, lng, 5)
     else:
-        shops = Shop.objects.nearby(lat, lng, radius) if lat is not None and lng is not None else Shop.objects.active()[:12]
+        shops = []
     recent_ids = request.session.get("recent_product_ids", []) + Cart(request).product_ids()
     rec_ids = get_recommendations(request.user.id if request.user.is_authenticated else None, recent_ids, 10)
-    recommendations = hydrate_products(rec_ids, lat, lng, radius, pincode=profile_pincode or None)
+    recommendations = hydrate_products(rec_ids, lat, lng, 5)
     return render(
         request,
         "core/home.html",
@@ -59,16 +59,20 @@ def search(request):
     shops = Shop.objects.none()
     products = Product.objects.none()
     if q:
-        location_filter = {}
+        nearby_shop_ids = None
         if request.user.is_authenticated:
             address = request.user.addresses.filter(is_default=True).first()
-            if address:
-                location_filter["pincode"] = address.pincode
-        shops = Shop.objects.active().filter(name__icontains=q, **location_filter).select_related("category")[:10]
+            if address and address.latitude is not None and address.longitude is not None:
+                nearby_shop_ids = [shop.pk for shop in Shop.objects.active().nearby(address.latitude, address.longitude, 5)]
+            elif address:
+                nearby_shop_ids = []
+        shops_qs = Shop.objects.active().filter(name__icontains=q).select_related("category")
         product_qs = Product.objects.filter(is_active=True, stock__gt=0, shop__is_active=True, name__icontains=q)
-        if location_filter:
-            product_qs = product_qs.filter(shop__pincode=location_filter["pincode"])
-        products = product_qs.select_related("shop")[:10]
+        if nearby_shop_ids is not None:
+            shops_qs = shops_qs.filter(pk__in=nearby_shop_ids)
+            product_qs = product_qs.filter(shop_id__in=nearby_shop_ids)
+        shops = shops_qs[:10]
+        products = product_qs.select_related("shop").prefetch_related("images")[:10]
     return render(request, "core/partials/search_results.html", {"q": q, "shops": shops, "products": products})
 
 
