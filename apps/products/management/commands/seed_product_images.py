@@ -4,7 +4,7 @@ from pathlib import Path
 
 import requests
 from django.conf import settings
-from django.core.files.base import ContentFile
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management.base import BaseCommand, CommandError
 from django.utils.text import slugify
 
@@ -161,7 +161,7 @@ class Command(BaseCommand):
 
                     image = ProductImage(product=product, source_url=photo["source_url"], position=0)
                     filename = f"{slugify(product.shop.slug + '-' + product.name)[:150]}-unsplash.jpg"
-                    image.image.save(filename, ContentFile(response.content), save=False)
+                    image.image = SimpleUploadedFile(filename, response.content, content_type="image/jpeg")
                     image.save()
                     used_sources.add(photo["source_url"])
                     total += 1

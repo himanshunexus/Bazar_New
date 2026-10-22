@@ -1,6 +1,9 @@
 import pytest
+import cloudinary
+import cloudinary.uploader
 from django.core.management import call_command
 from django.core.exceptions import ValidationError
+from django.test import override_settings
 
 from apps.products.models import Product, ProductImage
 
@@ -37,3 +40,32 @@ def test_seeded_product_photo_dry_run_selects_distinct_unsplash_sources(product,
     assert all(url.startswith("https://unsplash.com/photos/") for url in source_urls)
     assert len(set(source_urls)) == 2
     assert ProductImage.objects.filter(product__shop=product.shop).count() == 0
+
+
+@pytest.mark.django_db
+@override_settings(CLOUDINARY_STORAGE={"CLOUD_NAME": "test-cloud", "API_KEY": "test-key", "API_SECRET": "test-secret"})
+def test_seeded_product_photo_uploads_through_cloudinary_field(product, monkeypatch):
+    product.shop.slug = "demo-grocery-kirana"
+    product.shop.save(update_fields=["slug", "updated_at"])
+
+    class PhotoResponse:
+        content = b"\xff\xd8\xff\xe0mock-jpeg"
+        headers = {"Content-Type": "image/jpeg"}
+
+        def raise_for_status(self):
+            pass
+
+    monkeypatch.setattr("requests.Session.get", lambda self, url, timeout: PhotoResponse())
+    monkeypatch.setattr(
+        cloudinary.uploader,
+        "upload_resource",
+        lambda uploaded_file, **options: cloudinary.CloudinaryResource(
+            public_id="seeded/test-rice", format="jpg", version="1", type="upload", resource_type="image"
+        ),
+    )
+
+    call_command("seed_product_images", limit=1)
+
+    image = ProductImage.objects.get(product=product)
+    assert image.image.public_id == "seeded/test-rice"
+    assert image.source_url.startswith("https://unsplash.com/photos/")
