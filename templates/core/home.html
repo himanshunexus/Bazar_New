@@ -7,9 +7,9 @@
     <p class="eyebrow">Hyperlocal marketplace</p>
     <h1>Nearby shops, one cash-on-delivery cart.</h1>
   </div>
-  <form class="search" hx-get="{% url 'core:search' %}" hx-target="#search-results">
-    <input id="q" name="q" placeholder="Search products or shops" hx-trigger="input changed delay:300ms">
-  </form>
+  <div class="search">
+    <input id="q" name="q" placeholder="Search products or shops" hx-get="{% url 'core:search' %}" hx-target="#search-results" hx-trigger="input changed delay:300ms">
+  </div>
 </section>
 <div id="search-results"></div>
 <section class="section">
