@@ -1,0 +1,642 @@
+{
+  "demo-grocery-kirana|Aashirvaad Atta": {
+    "image_url": "https://images.unsplash.com/photo-1714842981153-ffeaf74e7a1a?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-bowl-of-flour-sitting-on-top-of-a-table-quVArOn8-30",
+    "alt": "a bowl of flour sitting on top of a table"
+  },
+  "demo-grocery-kirana|India Gate Basmati Rice": {
+    "image_url": "https://images.unsplash.com/photo-1586201375761-83865001e31c?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/raw-white-rice-grains-background--LdilhDx3sk",
+    "alt": "A close-up view of many raw white rice grains scattered together"
+  },
+  "demo-grocery-kirana|Toor Dal": {
+    "image_url": "https://images.unsplash.com/photo-1763368392508-3d4bddfdd20a?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-pile-of-small-brown-lentils-0P-RFP6Za4A",
+    "alt": "A pile of small brown lentils"
+  },
+  "demo-grocery-kirana|Fortune Sunflower Oil": {
+    "image_url": "https://images.unsplash.com/photo-1552592074-ea7a91b851b3?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/oil-dispenser-bottle-iCgfwfqgdzo",
+    "alt": "oil dispenser bottle"
+  },
+  "demo-grocery-kirana|Tata Salt": {
+    "image_url": "https://images.unsplash.com/photo-1646722391295-0bfc1035fb99?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-salt-and-pepper-shaker-sitting-on-a-table-Jf3cblqo9Wg",
+    "alt": "a salt and pepper shaker sitting on a table"
+  },
+  "demo-grocery-kirana|Sugar": {
+    "image_url": "https://images.unsplash.com/photo-1709651808265-977ed7ef78c6?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-pile-of-sugar-cubes-sitting-on-top-of-each-other-TXVntZ190Ao",
+    "alt": "a pile of sugar cubes sitting on top of each other"
+  },
+  "demo-grocery-kirana|Tata Tea": {
+    "image_url": "https://images.unsplash.com/photo-1766185387603-f03cb6d658fa?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-cup-of-tea-surrounded-by-green-leaves-b3Xszpkl48A",
+    "alt": "A cup of tea surrounded by green leaves"
+  },
+  "demo-grocery-kirana|Nescafe Classic": {
+    "image_url": "https://images.unsplash.com/photo-1745892477174-61d2145109ed?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/instant-coffee-and-a-spoon-in-a-mug-a6vyOLMGT7M",
+    "alt": "Instant coffee and a spoon in a mug"
+  },
+  "demo-grocery-kirana|Maggi Noodles": {
+    "image_url": "https://images.unsplash.com/photo-1612927601601-6638404737ce?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/ramen-bowl-with-egg-and-chili-RwAXb8Hv_sU",
+    "alt": "A bowl of ramen noodles topped with a halved egg, chili, and scallions"
+  },
+  "demo-grocery-kirana|Moong Dal": {
+    "image_url": "https://images.unsplash.com/photo-1788629531025-51f8fec9def1?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/mung-beans-in-metal-tray-RLqNrdGByek",
+    "alt": "A large square metal tray filled with dried green mung beans"
+  },
+  "demo-grocery-kirana|Besan": {
+    "image_url": "https://images.unsplash.com/photo-1749169439872-7cee08d9a71b?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/flour-is-being-scraped-with-a-utensil-GMbCWZ7VB-w",
+    "alt": "Flour is being scraped with a utensil"
+  },
+  "demo-grocery-kirana|Red Chilli Powder": {
+    "image_url": "https://images.unsplash.com/photo-1768729340132-a8c72080bb23?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/dried-red-chilies-and-chili-powder-in-a-small-bowl-7eSYtfR6V9E",
+    "alt": "Dried red chilies and chili powder in a small bowl"
+  },
+  "demo-fruits-vegetables|Banana": {
+    "image_url": "https://images.unsplash.com/photo-1587132137056-bfbf0166836e?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/yellow-banana-on-white-background-Kl3467edwsE",
+    "alt": "yellow banana on white background"
+  },
+  "demo-fruits-vegetables|Apple": {
+    "image_url": "https://images.unsplash.com/photo-1630563451961-ac2ff27616ab?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/red-apple-on-white-surface-zLCR7RsxYGs",
+    "alt": "red apple on white surface"
+  },
+  "demo-fruits-vegetables|Orange": {
+    "image_url": "https://images.unsplash.com/photo-1557800636-894a64c1696f?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/orange-fruit-U1iYwZ8Dx7k",
+    "alt": "orange fruit"
+  },
+  "demo-fruits-vegetables|Potato": {
+    "image_url": "https://images.unsplash.com/photo-1518977676601-b53f82aba655?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/brown-potato-lot-B0s3Xndk6tw",
+    "alt": "brown potato lot"
+  },
+  "demo-fruits-vegetables|Onion": {
+    "image_url": "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/red-onion-on-brown-wooden-table-D9h2-RxM1rE",
+    "alt": "red onion on brown wooden table"
+  },
+  "demo-fruits-vegetables|Tomato": {
+    "image_url": "https://images.unsplash.com/photo-1607305387299-a3d9611cd469?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/red-tomato-on-gray-concrete-surface-OlXUUQedQyM",
+    "alt": "red tomato on gray concrete surface"
+  },
+  "demo-fruits-vegetables|Carrot": {
+    "image_url": "https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/carrots-with-green-leafy-tops-GHRT9j21m2M",
+    "alt": "A bunch of fresh orange carrots with green leafy tops tied together"
+  },
+  "demo-fruits-vegetables|Spinach": {
+    "image_url": "https://images.unsplash.com/photo-1574316071802-0d684efa7bf5?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/fresh-green-spinach-leaves-6AAptb2kBak",
+    "alt": "A pile of fresh green spinach leaves with thin stems"
+  },
+  "demo-fruits-vegetables|Cucumber": {
+    "image_url": "https://images.unsplash.com/photo-1449300079323-02e209d9d3a6?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/cucumber-lot-2GiRcLP_jkI",
+    "alt": "cucumber lot"
+  },
+  "demo-fruits-vegetables|Mango": {
+    "image_url": "https://images.unsplash.com/photo-1787725313117-e97a3321f40a?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/three-purple-mangoes-on-branch-GcQkA66f6XI",
+    "alt": "Three purple mangoes hanging from a branch with green leaves in an orchard"
+  },
+  "demo-fruits-vegetables|Lemon": {
+    "image_url": "https://images.unsplash.com/photo-1774857244194-b2c66ac93e43?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/several-whole-lemons-and-one-cut-in-half-C5o6xUEfg0E",
+    "alt": "Several whole lemons and one cut in half"
+  },
+  "demo-fruits-vegetables|Green Peas": {
+    "image_url": "https://images.unsplash.com/photo-1596564823703-d28706a620e8?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/green-peas-in-macro-lens-bwKUJ3Y5JS4",
+    "alt": "green peas in macro lens"
+  },
+  "demo-bakery|Whole Wheat Bread": {
+    "image_url": "https://images.unsplash.com/photo-1670843837159-ddae2ec115d4?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-loaf-of-bread-sitting-on-top-of-a-wooden-board-y7x_TQO5XP0",
+    "alt": "a loaf of bread sitting on top of a wooden board"
+  },
+  "demo-bakery|Milk Bread": {
+    "image_url": "https://images.unsplash.com/photo-1598373182133-52452f7691ef?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/sliced-white-bread-on-wooden-board-w2ZFjDnUL3w",
+    "alt": "A loaf of sliced white bread on a wooden board with burlap"
+  },
+  "demo-bakery|Multigrain Bread": {
+    "image_url": "https://images.unsplash.com/photo-1534620808146-d33bb39128b2?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/sliced-breads-on-white-surface-WHJTaLqonkU",
+    "alt": "sliced breads on white surface"
+  },
+  "demo-bakery|Butter Croissant": {
+    "image_url": "https://images.unsplash.com/photo-1597528662465-55ece5734101?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/pastries-and-baking-tools-for-breakfast-Ns2aJ5OXKds",
+    "alt": "Croissants and chocolate pastries on a wooden board with a rolling pin and whisk"
+  },
+  "demo-bakery|Chocolate Muffin": {
+    "image_url": "https://images.unsplash.com/photo-1685100979994-b6f8384c345c?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-plate-of-chocolate-muffins-on-a-table-mZPKGqoAhkA",
+    "alt": "a plate of chocolate muffins on a table"
+  },
+  "demo-bakery|Veg Puff": {
+    "image_url": "https://images.unsplash.com/photo-1682263167429-0dbcf2c1e127?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-black-plate-topped-with-pastries-on-top-of-a-table-5C0ev9m9lbo",
+    "alt": "a black plate topped with pastries on top of a table"
+  },
+  "demo-bakery|Paneer Puff": {
+    "image_url": "https://images.unsplash.com/photo-1788600447970-6b5167889f34?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/cheese-pastries-on-floral-plate-Bv7w-i02B3Y",
+    "alt": "Two cheese topped pastries on a blue and white floral patterned plate"
+  },
+  "demo-bakery|Chocolate Cake": {
+    "image_url": "https://images.unsplash.com/photo-1768260732302-12822bd6427b?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-slice-of-rich-chocolate-cake-with-cream-and-cherry-9hQkJkrpDgY",
+    "alt": "A slice of rich chocolate cake with cream and cherry"
+  },
+  "demo-bakery|Black Forest Pastry": {
+    "image_url": "https://images.unsplash.com/photo-1779282312464-d556d852daa4?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-delicious-black-forest-cake-with-cherries-on-red-satin-2f0boZuyd3M",
+    "alt": "A delicious black forest cake with cherries on red satin"
+  },
+  "demo-bakery|Cookies": {
+    "image_url": "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/brown-cookies-on-round-brown-bowl-kID9sxbJ3BQ",
+    "alt": "brown cookies on round brown bowl"
+  },
+  "demo-bakery|Garlic Bread": {
+    "image_url": "https://images.unsplash.com/photo-1556008531-57e6eefc7be4?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/garlic-bread-yl33be56sbg",
+    "alt": "garlic bread"
+  },
+  "demo-bakery|Rusk": {
+    "image_url": "https://images.unsplash.com/photo-1612827788868-c8632040ab64?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/brown-and-black-bread-on-white-ceramic-plate-Xm-oNioQsZg",
+    "alt": "brown and black bread on white ceramic plate"
+  },
+  "demo-dairy|Full Cream Milk": {
+    "image_url": "https://images.unsplash.com/photo-1611211301828-be4b317d0707?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/person-pouring-milk-on-clear-drinking-glass-BYlHH_1j2GA",
+    "alt": "person pouring milk on clear drinking glass"
+  },
+  "demo-dairy|Toned Milk": {
+    "image_url": "https://images.unsplash.com/photo-1639151082235-406d8eb262b9?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-bottle-of-milk-next-to-a-glass-of-milk-c6TKtsi8C1k",
+    "alt": "a bottle of milk next to a glass of milk"
+  },
+  "demo-dairy|Curd": {
+    "image_url": "https://images.unsplash.com/photo-1756827894939-32127a263672?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-single-black-blueberry-in-creamy-white-yogurt-YD1HUSiperg",
+    "alt": "A single black blueberry in creamy white yogurt"
+  },
+  "demo-dairy|Paneer": {
+    "image_url": "https://images.unsplash.com/photo-1635407723462-10c0871194a1?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-wooden-cutting-board-topped-with-sliced-cheese-IXImZ0nHCsg",
+    "alt": "a wooden cutting board topped with sliced cheese"
+  },
+  "demo-dairy|Salted Butter": {
+    "image_url": "https://images.unsplash.com/photo-1603596311044-f19158b61f28?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-bar-of-butter-sitting-on-top-of-a-wooden-table-nj5WHPvikto",
+    "alt": "a bar of butter sitting on top of a wooden table"
+  },
+  "demo-dairy|Cheese Slices": {
+    "image_url": "https://images.unsplash.com/photo-1627935722051-395636b0d8a5?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/sliced-cheese-on-brown-wooden-chopping-board-_L5MGd0w1FQ",
+    "alt": "sliced cheese on brown wooden chopping board"
+  },
+  "demo-dairy|Fresh Cream": {
+    "image_url": "https://images.unsplash.com/photo-1588195539297-f0b4efdb5472?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/ice-cream-in-white-ceramic-bowl-PWwKJLHzekk",
+    "alt": "ice cream in white ceramic bowl"
+  },
+  "demo-dairy|Buttermilk": {
+    "image_url": "https://images.unsplash.com/photo-1550583724-b2692b85b150?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/person-pours-milk-into-glass-_8bnn1GqX70",
+    "alt": "person pours milk into glass"
+  },
+  "demo-dairy|Lassi": {
+    "image_url": "https://images.unsplash.com/photo-1692620609860-be6717812f71?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-pink-drink-with-a-straw-sticking-out-of-it-CBwoyP69nAU",
+    "alt": "a pink drink with a straw sticking out of it"
+  },
+  "demo-dairy|Ghee": {
+    "image_url": "https://images.unsplash.com/photo-1573812461383-e5f8b759d12e?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/jar-of-butter-with-spoon-xhOUnxVVb6s",
+    "alt": "jar of butter with spoon"
+  },
+  "demo-dairy|Flavoured Yogurt": {
+    "image_url": "https://images.unsplash.com/photo-1649118173382-dad295004282?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-spoon-drizzling-fruit-into-a-jar-of-yogurt-VnXAdRS6Yt4",
+    "alt": "a spoon drizzling fruit into a jar of yogurt"
+  },
+  "demo-dairy|Milkshake": {
+    "image_url": "https://images.unsplash.com/photo-1763649157120-0235d2209fb6?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/hand-holding-a-milkshake-out-of-car-window-7k31j4-fkHk",
+    "alt": "Hand holding a milkshake out of car window"
+  },
+  "demo-snacks-sweets|Samosa": {
+    "image_url": "https://images.unsplash.com/photo-1772729996007-40bad08b3c40?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/golden-fried-samosas-served-on-a-white-napkin-iaEZgGPnEwo",
+    "alt": "Golden fried samosas served on a white napkin"
+  },
+  "demo-snacks-sweets|Kachori": {
+    "image_url": "https://images.unsplash.com/photo-1788620195664-bef14ea327a9?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/street-food-stall-serving-fried-snacks-Fji510XHh4c",
+    "alt": "A man serving fried snacks from a metal tray at a street food stall"
+  },
+  "demo-snacks-sweets|Gulab Jamun": {
+    "image_url": "https://images.unsplash.com/photo-1778448806608-4b2d5817eff2?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/sweet-jalebi-and-other-fried-desserts-arranged-beautifully-4FNhtF_qqeo",
+    "alt": "Sweet jalebi and other fried desserts arranged beautifully"
+  },
+  "demo-snacks-sweets|Rasgulla": {
+    "image_url": "https://images.unsplash.com/photo-1714799263412-2e0c1f875959?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-wooden-bowl-filled-with-white-balls-of-food-XH0XpbicHAo",
+    "alt": "a wooden bowl filled with white balls of food"
+  },
+  "demo-snacks-sweets|Besan Ladoo": {
+    "image_url": "https://images.unsplash.com/photo-1782033032439-a2c656ca2f59?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-display-case-filled-with-various-delicious-pastries-and-sweets-wMPs7gJCNdc",
+    "alt": "A display case filled with various delicious pastries and sweets"
+  },
+  "demo-snacks-sweets|Kaju Katli": {
+    "image_url": "https://images.unsplash.com/photo-1758910536889-43ce7b3199fd?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/assortment-of-colorful-indian-sweets-displayed-in-a-shop-3zgia9k593w",
+    "alt": "Assortment of colorful indian sweets displayed in a shop"
+  },
+  "demo-snacks-sweets|Bhujia": {
+    "image_url": "https://images.unsplash.com/photo-1788180074989-a594fbf8fbd6?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/snack-mix-in-white-ramekin-STTkqGm8078",
+    "alt": "A white ramekin filled with crunchy snack mix on a green napkin"
+  },
+  "demo-snacks-sweets|Aloo Bhujia": {
+    "image_url": "https://images.unsplash.com/photo-1788180074988-3332f56d625a?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/snack-mix-with-roasted-peanuts-UZDkRLoarFs",
+    "alt": "A white bowl filled with crunchy fried snack mix and roasted peanuts"
+  },
+  "demo-snacks-sweets|Namkeen Mix": {
+    "image_url": "https://images.unsplash.com/photo-1598371623789-44e341c1b6ab?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/brown-and-white-nuts-on-clear-glass-bowl-8B8rxK16oXo",
+    "alt": "brown and white nuts on clear glass bowl"
+  },
+  "demo-snacks-sweets|Potato Chips": {
+    "image_url": "https://images.unsplash.com/photo-1783332488482-8df54e4fc24c?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/detailed-texture-of-crunchy-ridged-potato-chips-LjmewKHFh34",
+    "alt": "Detailed texture of crunchy ridged potato chips"
+  },
+  "demo-snacks-sweets|Peanut Chikki": {
+    "image_url": "https://images.unsplash.com/photo-1772984959639-54284678b805?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/pieces-of-peanut-brittle-scattered-on-a-white-surface-zOc8G21UuVU",
+    "alt": "Pieces of peanut brittle scattered on a white surface"
+  },
+  "demo-snacks-sweets|Soan Papdi": {
+    "image_url": "https://images.unsplash.com/photo-1769576918185-f4f57316d78a?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/round-indian-sweets-topped-with-pistachios-on-plates-kOWqljqrEdM",
+    "alt": "Round indian sweets topped with pistachios on plates"
+  },
+  "demo-stationery|Classmate Notebook": {
+    "image_url": "https://images.unsplash.com/photo-1554757387-fa0367573d09?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/opened-notebook-zwmkMkJ2Qi4",
+    "alt": "opened notebook"
+  },
+  "demo-stationery|Ball Pens Blue": {
+    "image_url": "https://images.unsplash.com/photo-1785063418404-4ca80251f14a?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/blue-ink-pen-tip-against-a-blurred-purple-background-Nv7rzFJm43Y",
+    "alt": "Blue ink pen tip against a blurred purple background"
+  },
+  "demo-stationery|Gel Pens": {
+    "image_url": "https://images.unsplash.com/photo-1654608904845-7872f07475bc?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-cup-filled-with-pens-and-pencils-on-top-of-a-desk-oVeTus_Y2Ns",
+    "alt": "a cup filled with pens and pencils on top of a desk"
+  },
+  "demo-stationery|HB Pencils": {
+    "image_url": "https://images.unsplash.com/photo-1595584354232-f07d525d87c1?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/orange-pencil-on-black-textile-Md9H3aeXFHE",
+    "alt": "orange pencil on black textile"
+  },
+  "demo-stationery|Eraser Pack": {
+    "image_url": "https://images.unsplash.com/photo-1698365902200-360ea4eea247?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-group-of-yellow-pencils-with-a-pink-eraser-wQ7OUETaYIg",
+    "alt": "a group of yellow pencils with a pink eraser"
+  },
+  "demo-stationery|Sharpener": {
+    "image_url": "https://images.unsplash.com/photo-1779144639701-d25a1cfa71aa?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-pencil-sharpener-and-colored-pencils-on-a-wooden-desk-Y25inKeOBd8",
+    "alt": "A pencil sharpener and colored pencils on a wooden desk"
+  },
+  "demo-stationery|A4 Copier Paper": {
+    "image_url": "https://images.unsplash.com/photo-1470790376778-a9fbc86d70e2?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/scattered-sheets-of-white-paper-covering-the-entire-frame-aJTiW00qqtI",
+    "alt": "Scattered sheets of white paper covering the entire frame"
+  },
+  "demo-stationery|Sticky Notes": {
+    "image_url": "https://images.unsplash.com/photo-1580934174026-8142803ebb5b?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/yellow-sticky-notes-on-white-wall-Vq1FQ_uNppw",
+    "alt": "yellow sticky notes on white wall"
+  },
+  "demo-stationery|Sketch Pens": {
+    "image_url": "https://images.unsplash.com/photo-1561117089-3fb7c944887f?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/assorted-color-marker-pens-PQinRWK1TgU",
+    "alt": "assorted-color marker pens"
+  },
+  "demo-stationery|Geometry Box": {
+    "image_url": "https://images.unsplash.com/photo-1789369136673-1d585b2cfa62?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/protractor-and-ruler-on-paper-du-ha_RgsN4",
+    "alt": "A black metal protractor resting on a silver metal ruler on white paper"
+  },
+  "demo-stationery|Highlighter Set": {
+    "image_url": "https://images.unsplash.com/photo-1712762056200-50d8f803ba10?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-person-writing-on-a-notebook-with-colored-pens-OEvLi8LM7cc",
+    "alt": "a person writing on a notebook with colored pens"
+  },
+  "demo-stationery|Whiteboard Marker": {
+    "image_url": "https://images.unsplash.com/photo-1598520106830-8c45c2035460?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/person-writing-on-glass-whiteboard-with-diagrams-5Q07sS54D0Q",
+    "alt": "person writing on glass whiteboard with diagrams"
+  },
+  "demo-mobile-accessories|Type C Cable": {
+    "image_url": "https://images.unsplash.com/photo-1572721546624-05bf65ad7679?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/orange-usb-cables-yh0UtueiZ-I",
+    "alt": "orange USB cables"
+  },
+  "demo-mobile-accessories|Lightning Cable": {
+    "image_url": "https://images.unsplash.com/photo-1499033300314-43c811cff6d5?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/iphone-cable-1M0omkZlGM4",
+    "alt": "iPhone cable"
+  },
+  "demo-mobile-accessories|20W Fast Charger": {
+    "image_url": "https://images.unsplash.com/photo-1725304382197-663ae3864750?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-close-up-of-a-cell-phone-charger-on-a-table-1A_MMH9w-Sc",
+    "alt": "A close up of a cell phone charger on a table"
+  },
+  "demo-mobile-accessories|Power Bank": {
+    "image_url": "https://images.unsplash.com/photo-1706275399494-fb26bbc5da63?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-silver-electronic-device-sitting-on-top-of-a-white-table-CY4mVpRvPxc",
+    "alt": "a silver electronic device sitting on top of a white table"
+  },
+  "demo-mobile-accessories|Tempered Glass": {
+    "image_url": "https://images.unsplash.com/photo-1695480571861-90044e831733?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-close-up-of-a-cell-phone-with-a-keyboard-in-the-background-fHPp3NXrAnI",
+    "alt": "a close up of a cell phone with a keyboard in the background"
+  },
+  "demo-mobile-accessories|Phone Cover": {
+    "image_url": "https://images.unsplash.com/photo-1620786963525-4a74f1697a46?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/person-holding-orange-leather-smartphone-case-A_kja7lqrGM",
+    "alt": "person holding orange leather smartphone case"
+  },
+  "demo-mobile-accessories|Wireless Earbuds": {
+    "image_url": "https://images.unsplash.com/photo-1783890848515-c0dc28b25ef2?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/white-wireless-earbuds-in-an-open-charging-case-Lq_hFffbAeM",
+    "alt": "White wireless earbuds in an open charging case"
+  },
+  "demo-mobile-accessories|Neckband": {
+    "image_url": "https://images.unsplash.com/photo-1653919114056-640c16de7838?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-pair-of-headphones-sitting-on-top-of-a-table-2esJN3NDL6w",
+    "alt": "a pair of headphones sitting on top of a table"
+  },
+  "demo-mobile-accessories|Car Charger": {
+    "image_url": "https://images.unsplash.com/photo-1760538961281-b4619503cc1d?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/woman-using-phone-near-electric-car-charger-oI3-ky1CB-w",
+    "alt": "Woman using phone near electric car charger"
+  },
+  "demo-mobile-accessories|USB C Adapter": {
+    "image_url": "https://images.unsplash.com/photo-1619459072761-496c0812331b?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/white-usb-cable-on-white-surface-4xMAiJZPQXI",
+    "alt": "white usb cable on white surface"
+  },
+  "demo-mobile-accessories|Mobile Stand": {
+    "image_url": "https://images.unsplash.com/photo-1676300463288-0a1183aef2fa?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-cell-phone-sitting-on-top-of-a-table-RRtv4cviT08",
+    "alt": "a cell phone sitting on top of a table"
+  },
+  "demo-mobile-accessories|Cleaning Kit": {
+    "image_url": "https://images.unsplash.com/photo-1777655789747-9644d9596287?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/cleaning-supplies-and-lemons-arranged-on-a-wooden-surface-S76_Upr40l4",
+    "alt": "Cleaning supplies and lemons arranged on a wooden surface"
+  },
+  "demo-home-kitchen|Stainless Steel Bottle": {
+    "image_url": "https://images.unsplash.com/photo-1676854121021-66b6a8ddb08d?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-group-of-people-holding-different-colored-water-bottles-7sjdrgZP6w8",
+    "alt": "a group of people holding different colored water bottles"
+  },
+  "demo-home-kitchen|Lunch Box": {
+    "image_url": "https://images.unsplash.com/photo-1786201188628-db52cdadb037?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/bento-box-with-eel-and-chicken-ETWc5f7qctw",
+    "alt": "A bento box, a bowl of eel, and fried chicken on a pink surface"
+  },
+  "demo-home-kitchen|Non Stick Pan": {
+    "image_url": "https://images.unsplash.com/photo-1581622558638-818128465982?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/black-frying-pan-on-stove-j5tFG39qYKw",
+    "alt": "black frying pan on stove"
+  },
+  "demo-home-kitchen|Glass Storage Jars": {
+    "image_url": "https://images.unsplash.com/photo-1590283706013-b62230a09b79?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/two-clear-glass-jars-on-white-shelf-zoymUrsMg0g",
+    "alt": "two clear glass jars on white shelf"
+  },
+  "demo-home-kitchen|Kitchen Towels": {
+    "image_url": "https://images.unsplash.com/photo-1632334994199-cc2ba6538141?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-kitchen-counter-with-a-cutting-board-and-knife-holder-OzwR9wlCV8w",
+    "alt": "a kitchen counter with a cutting board and knife holder"
+  },
+  "demo-home-kitchen|Dishwash Liquid": {
+    "image_url": "https://images.unsplash.com/photo-1691057183900-0a0f9ddbf6e4?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-bottle-of-soap-and-a-soap-dish-on-a-counter-3Ipi_WDIupw",
+    "alt": "a bottle of soap and a soap dish on a counter"
+  },
+  "demo-home-kitchen|Microfiber Cloth": {
+    "image_url": "https://images.unsplash.com/photo-1761934658112-80095148fe87?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-fluffy-gray-microfiber-cloth-on-a-red-surface-_5kMK55CK9M",
+    "alt": "A fluffy gray microfiber cloth on a red surface"
+  },
+  "demo-home-kitchen|LED Bulb": {
+    "image_url": "https://images.unsplash.com/photo-1529310399831-ed472b81d589?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/light-bulb-illustration-_kdTyfnUFAc",
+    "alt": "light bulb illustration"
+  },
+  "demo-home-kitchen|Storage Basket": {
+    "image_url": "https://images.unsplash.com/photo-1787074629663-1048a1cec018?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/fabric-storage-basket-with-floral-pattern-oHFYajl2bRg",
+    "alt": "A fabric storage basket with a yellow rim and floral plaid pattern"
+  },
+  "demo-home-kitchen|Tea Strainer": {
+    "image_url": "https://images.unsplash.com/photo-1768690655713-7f6746512c8a?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/floral-mug-coaster-tea-strainer-and-box-on-blue-SwcEVzx0ip0",
+    "alt": "Floral mug, coaster, tea strainer, and box on blue"
+  },
+  "demo-home-kitchen|Peeler": {
+    "image_url": "https://images.unsplash.com/photo-1779635593797-7818e4131b39?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/peeled-and-whole-citrus-fruits-with-a-peeler-9vOF8CHgVF4",
+    "alt": "Peeled and whole citrus fruits with a peeler"
+  },
+  "demo-home-kitchen|Spice Box": {
+    "image_url": "https://images.unsplash.com/photo-1771541897176-44a3e01dc484?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/various-colorful-spices-arranged-in-metal-bowls-on-a-tray-SvM3z6WcYO8",
+    "alt": "Various colorful spices arranged in metal bowls on a tray"
+  },
+  "satyam-kirana-store|Maggi Masala Noodles": {
+    "image_url": "https://images.unsplash.com/photo-1664337873053-840ea51d271d?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-bowl-of-noodles-DXVG6Rld_dQ",
+    "alt": "a bowl of noodles"
+  },
+  "satyam-kirana-store|Britannia Bread": {
+    "image_url": "https://images.unsplash.com/photo-1767065886426-832b32ce435a?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-freshly-baked-loaf-of-bread-on-a-wooden-board-azNh7O_BpbY",
+    "alt": "A freshly baked loaf of bread on a wooden board"
+  },
+  "satyam-kirana-store|Tata Salt": {
+    "image_url": "https://images.unsplash.com/photo-1646722670581-974d084e0ec0?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-salt-shaker-sitting-on-top-of-a-table-i3wFM-9MvAs",
+    "alt": "a salt shaker sitting on top of a table"
+  },
+  "satyam-kirana-store|Parle-G Biscuits": {
+    "image_url": "https://images.unsplash.com/photo-1621353354739-1420ff28ead9?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/brown-cookies-on-white-table-DpL-I3hyjO4",
+    "alt": "brown cookies on white table"
+  },
+  "the-u-mart-limda|Banana": {
+    "image_url": "https://images.unsplash.com/photo-1768672991601-e72e8005142c?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-close-up-of-ripe-yellow-bananas-clustered-together-CMLNsyI89UM",
+    "alt": "A close-up of ripe yellow bananas clustered together"
+  },
+  "the-u-mart-limda|Apple": {
+    "image_url": "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/bunch-of-red-apples-wXuzS9xR49M",
+    "alt": "bunch of red apples"
+  },
+  "the-u-mart-limda|Tomato": {
+    "image_url": "https://images.unsplash.com/photo-1783328122146-976e968963a1?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-single-red-tomato-with-green-stem-casting-a-shadow-LLAWazUCB3Q",
+    "alt": "A single red tomato with green stem casting a shadow"
+  },
+  "the-u-mart-limda|Onion": {
+    "image_url": "https://images.unsplash.com/photo-1772453609866-a64abd8ad630?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-red-onion-with-roots-and-green-sprouts-iRj1JjS_ONI",
+    "alt": "A red onion with roots and green sprouts"
+  },
+  "tea-post-parul-university|Veg Puff": {
+    "image_url": "https://images.unsplash.com/photo-1638539032813-df65d8aea392?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-plate-full-of-pastries-sitting-on-a-table-DK_5TqW-BS8",
+    "alt": "a plate full of pastries sitting on a table"
+  },
+  "tea-post-parul-university|Chocolate Muffin": {
+    "image_url": "https://images.unsplash.com/photo-1611614010348-7df489604fe3?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/chocolate-cupcakes-on-blue-and-white-ceramic-plate-F6ajnawxySY",
+    "alt": "chocolate cupcakes on blue and white ceramic plate"
+  },
+  "tea-post-parul-university|Cold Coffee": {
+    "image_url": "https://images.unsplash.com/photo-1771210849472-84a07b2e793a?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/iced-coffee-with-cream-and-straw-on-wooden-table-0ix19Sp9K7g",
+    "alt": "Iced coffee with cream and straw on wooden table"
+  },
+  "tea-post-parul-university|Veg Grilled Sandwich": {
+    "image_url": "https://images.unsplash.com/photo-1655279562015-047c3da9a271?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-sandwich-cut-in-half-Z7X1PPL_r2k",
+    "alt": "a sandwich cut in half"
+  },
+  "chhaswala-parul-university|Amul Taaza Milk": {
+    "image_url": "https://images.unsplash.com/photo-1768850418251-17480117ac9b?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/glass-bottle-of-thiele-dairy-milk-GTtFuprJxAU",
+    "alt": "Glass bottle of thiele dairy milk"
+  },
+  "chhaswala-parul-university|Amul Masti Curd": {
+    "image_url": "https://images.unsplash.com/photo-1672372536975-c2da9648f64a?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-bowl-of-yogurt-with-a-sprig-of-rosemary-7BxTglPGu4o",
+    "alt": "a bowl of yogurt with a sprig of rosemary"
+  },
+  "chhaswala-parul-university|Amul Buttermilk": {
+    "image_url": "https://images.unsplash.com/photo-1644346402970-d8d7304ff82f?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-milk-splashing-into-a-glass-of-milk-N_WtpQ06mpo",
+    "alt": "a milk splashing into a glass of milk"
+  },
+  "chhaswala-parul-university|Amul Cheese Slices": {
+    "image_url": "https://images.unsplash.com/photo-1683314573422-649a3c6ad784?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-couple-of-pieces-of-cheese-sitting-on-top-of-a-wooden-cutting-board-JJcT6VJWDlg",
+    "alt": "a couple of pieces of cheese sitting on top of a wooden cutting board"
+  },
+  "wfc-food-court-parul|Tea": {
+    "image_url": "https://images.unsplash.com/photo-1773394473042-0544a86abe61?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/tea-set-arranged-on-a-wooden-tray-by-the-window-5noRgE7qgmI",
+    "alt": "Tea set arranged on a wooden tray by the window"
+  },
+  "wfc-food-court-parul|Veg Sandwich": {
+    "image_url": "https://images.unsplash.com/photo-1539252554453-80ab65ce3586?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/black-plate-with-sandwich-mAQZ3X_8_l0",
+    "alt": "black plate with sandwich"
+  },
+  "wfc-food-court-parul|French Fries": {
+    "image_url": "https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-basket-of-french-fries-sitting-on-top-of-a-wooden-table-ChXHveqrb28",
+    "alt": "a basket of french fries sitting on top of a wooden table"
+  },
+  "wfc-food-court-parul|Cold Coffee": {
+    "image_url": "https://images.unsplash.com/photo-1759259639356-6eee63241869?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/cold-brew-coffee-in-a-mason-jar-with-ice-WCmMU38zg1c",
+    "alt": "Cold brew coffee in a mason jar with ice"
+  },
+  "parul-sevashram-pharmacy|Basic First Aid Kit": {
+    "image_url": "https://images.unsplash.com/photo-1600091474842-83bb9c05a723?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-bag-of-pills-a-stethoscope-and-a-first-aid-kit-ZyxNWi3JCto",
+    "alt": "a bag of pills, a stethoscope, and a first aid kit"
+  },
+  "parul-sevashram-pharmacy|Adhesive Bandages": {
+    "image_url": "https://images.unsplash.com/photo-1634703945182-cd1772aed95c?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-man-with-a-bandage-on-his-head-and-a-red-cross-painted-on-his-face-d1czEjIohgw",
+    "alt": "a man with a bandage on his head and a red cross painted on his face"
+  },
+  "parul-sevashram-pharmacy|Digital Thermometer": {
+    "image_url": "https://images.unsplash.com/photo-1645360954716-a0b7a8d45535?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-digital-thermometer-on-a-door-handle-CrlCNBJ4QGY",
+    "alt": "a digital thermometer on a door handle"
+  },
+  "parul-sevashram-pharmacy|Hand Sanitizer": {
+    "image_url": "https://images.unsplash.com/photo-1608564348103-2b78891150cf?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/a-bottle-of-hand-sanitizing-gel-on-a-white-background-tAZElyZEm40",
+    "alt": "a bottle of hand sanitizing gel on a white background"
+  },
+  "limda-farsan-corner|Khaman": {
+    "image_url": "https://images.unsplash.com/photo-1791166611641-0a394b76cdcb?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/street-food-snacks-in-blue-trays-_PDK1DVOqCY",
+    "alt": "Deep-fried yellow snacks in blue plastic trays at a street food stall"
+  },
+  "limda-farsan-corner|Samosa": {
+    "image_url": "https://images.unsplash.com/photo-1601050690597-df0568f70950?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/samosas-with-green-chili-and-pomegranate-8T9AVksyt7s",
+    "alt": "Three golden fried samosas on a wooden tray with green chili and pomegranate seeds"
+  },
+  "limda-farsan-corner|Fafda": {
+    "image_url": "https://images.unsplash.com/photo-1791989396500-127d525aa9f7?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/savory-indian-snacks-in-display-case-OlElzH1Hn94",
+    "alt": "Glass display cases filled with various savory Indian snacks in warm sunlight"
+  },
+  "limda-farsan-corner|Sev Mamra": {
+    "image_url": "https://images.unsplash.com/photo-1777732785406-f18022cbac1d?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/puffed-rice-snack-served-in-a-paper-cone-aQSE6tZ-WYA",
+    "alt": "Puffed rice snack served in a paper cone"
+  },
+  "hostel-household-mart|Dettol Handwash": {
+    "image_url": "https://images.unsplash.com/photo-1787618580858-1bac2d9e167d?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/green-liquid-soap-bottle-with-pump-IobIlO_BvhA",
+    "alt": "A green liquid soap bottle with a white pump dispenser on a black surface"
+  },
+  "hostel-household-mart|Laundry Detergent": {
+    "image_url": "https://images.unsplash.com/photo-1582735689369-4fe89db7114c?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/white-textile-on-blue-plastic-laundry-basket-5TfCI4nj6B4",
+    "alt": "white textile on blue plastic laundry basket"
+  },
+  "hostel-household-mart|Shampoo Sachets": {
+    "image_url": "https://images.unsplash.com/photo-1766142167641-507c80e35eb9?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/two-bottles-of-shampoo-and-conditioner-with-argan-oil-fEioDH186lc",
+    "alt": "Two bottles of shampoo and conditioner with argan oil"
+  },
+  "hostel-household-mart|Stainless Steel Bottle": {
+    "image_url": "https://images.unsplash.com/photo-1598410924570-6e37b6c54fe6?fm=jpg&q=78&w=640&fit=crop",
+    "source_url": "https://unsplash.com/photos/black-and-gray-sports-bottle-on-brown-sand-near-body-of-water-during-daytime-0b_x7ptjrq8",
+    "alt": "black and gray sports bottle on brown sand near body of water during daytime"
+  }
+}
