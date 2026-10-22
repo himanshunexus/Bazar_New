@@ -3,9 +3,7 @@
 {% block content %}
 <section class="section product-detail">
   <div>
-    {% with image=product.images.first %}
-      {% if image %}<img class="product-image" src="{{ image.secure_url }}" alt="{{ product.name }}">{% if image.source_url %}<small class="photo-credit"><a href="{{ image.source_url }}" target="_blank" rel="noopener">Photo source: Unsplash</a></small>{% endif %}{% endif %}
-    {% endwith %}
+    {% include "products/_image.html" with product=product media_class="product-detail-media" show_credit=True %}
   </div>
   <div>
     <p><a href="{{ product.shop.get_absolute_url }}">{{ product.shop.name }}</a></p>
