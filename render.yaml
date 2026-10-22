@@ -17,7 +17,7 @@ services:
       - key: DISABLE_SERVER_SIDE_CURSORS
         value: "True"
       - key: SEED_ON_DEPLOY
-        value: "true"
+        value: "false"
       - key: SEED_DEMO_PASSWORD
         sync: false
       - key: SEED_CITY
