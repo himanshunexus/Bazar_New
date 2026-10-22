@@ -17,12 +17,16 @@ from .ml_client import get_recommendations, hydrate_products
 def home(request):
     lat = request.session.get("lat")
     lng = request.session.get("lng")
-    if request.user.is_authenticated and (not lat or not lng):
+    location_missing = lat in (None, "") or lng in (None, "")
+    if request.user.is_authenticated and location_missing:
         address = request.user.addresses.filter(is_default=True).first()
         if address and address.latitude is not None and address.longitude is not None:
             lat, lng = str(address.latitude), str(address.longitude)
+            location_missing = False
+    if location_missing:
+        lat, lng = settings.DEFAULT_LAT, settings.DEFAULT_LNG
     radius = request.GET.get("radius") or request.session.get("radius_km") or settings.DEFAULT_RADIUS_KM
-    shops = Shop.objects.nearby(lat, lng, radius) if lat and lng else Shop.objects.active()[:12]
+    shops = Shop.objects.nearby(lat, lng, radius) if lat is not None and lng is not None else Shop.objects.active()[:12]
     recent_ids = request.session.get("recent_product_ids", []) + Cart(request).product_ids()
     rec_ids = get_recommendations(request.user.id if request.user.is_authenticated else None, recent_ids, 10)
     recommendations = hydrate_products(rec_ids, lat, lng, radius)

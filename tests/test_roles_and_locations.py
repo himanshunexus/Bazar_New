@@ -1,10 +1,34 @@
 from decimal import Decimal
 
 import pytest
+from django.test import override_settings
 
 from apps.accounts.models import User
 from apps.cart.models import DeliveryAgent
 from apps.shops.models import Shop
+
+
+@pytest.mark.django_db
+@override_settings(DEFAULT_LAT=28.6139, DEFAULT_LNG=77.2090, DEFAULT_RADIUS_KM=5)
+def test_home_defaults_to_configured_location(client, shop, category, monkeypatch):
+    from apps.core import views
+
+    monkeypatch.setattr(views, "get_recommendations", lambda *_args: [])
+    Shop.objects.create(
+        owner=User.objects.create_user("far-home-seller", "far-home@example.com", password="pw", role=User.Role.SELLER),
+        category=category,
+        name="Far away",
+        slug="far-away-home-shop",
+        phone="9123456788",
+        address="Far away",
+        city=shop.city,
+        pincode=shop.pincode,
+        latitude=Decimal("28.800000"),
+        longitude=Decimal("77.209000"),
+    )
+    response = client.get("/")
+    assert response.status_code == 200
+    assert [item.name for item in response.context["shops"]] == [shop.name]
 
 
 @pytest.mark.django_db
