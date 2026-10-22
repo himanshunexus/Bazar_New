@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load static %}
+{% block head %}<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="{% static 'js/order-tracking.js' %}" defer></script>{% endblock %}
+{% block content %}
+<section class="section narrow">
+  <div class="section-head"><div><p class="eyebrow">{{ order.order_number }}</p><h1>Track your order</h1><p class="muted">{{ order.shop.name }} · Placed {{ order.created_at|date:"d M Y, h:i A" }}</p></div><a class="button secondary" href="{% url 'cart:order_detail' order.pk %}">View details</a></div>
+  <article class="card order-detail-card">
+    {% if cancelled %}
+      <div class="notice danger"><h2>Order cancelled</h2><p>This order will not be delivered. Contact the shop if you need help.</p></div>
+    {% else %}
+      <ol class="tracking-timeline" aria-label="Order progress">
+        {% for step in timeline %}
+          <li class="tracking-step{% if step.complete %} is-complete{% endif %}{% if step.current %} is-current{% endif %}">
+            <span class="tracking-marker" aria-hidden="true">{% if step.complete %}✓{% else %}{{ forloop.counter }}{% endif %}</span>
+            <div><h2>{{ step.label }}</h2><p>{{ step.description }}</p>{% if step.current %}<span class="badge warning">Current status</span>{% endif %}</div>
+          </li>
+        {% endfor %}
+      </ol>
+    {% endif %}
+
+    {% if order.delivery_agent and order.status == 'DISPATCHED' or order.delivery_agent and order.status == 'OUT_FOR_DELIVERY' or order.status == 'DELIVERED' %}
+      <div class="delivery-tracking" data-estimated-delivery="{{ order.estimated_delivery_time|date:'c' }}">
+        {% if order.delivery_agent %}<h2>Delivery partner: {{ order.delivery_agent.name }}</h2><p class="muted">{{ order.delivery_agent.phone }}{% if order.delivery_agent.vehicle_number %} · {{ order.delivery_agent.vehicle_number }}{% endif %}</p>{% endif %}
+        {% if order.estimated_delivery_time and order.status != 'DELIVERED' %}<div class="countdown-card"><span>Estimated arrival</span><strong id="delivery-countdown">Calculating…</strong></div><p class="arrival-alert" id="arrival-alert" hidden>⚡ Estimated arrival time is close.</p>{% endif %}
+        {% if order.shop.latitude and order.shop.longitude and order.group.delivery_latitude and order.group.delivery_longitude %}
+          <p id="rider-location-status" class="muted" role="status" aria-live="polite">Waiting for live rider location…</p>
+          <div id="rider-map" data-location-url="{% url 'cart:rider_location_for_order' order.pk %}" data-shop-lat="{{ order.shop.latitude }}" data-shop-lng="{{ order.shop.longitude }}" data-destination-lat="{{ order.group.delivery_latitude }}" data-destination-lng="{{ order.group.delivery_longitude }}" style="height:320px;border-radius:12px"></div>
+          <p class="muted">Map shows the shop, delivery address, and the rider's latest shared location.</p>
+        {% else %}<p class="muted">Live map is unavailable because a shop or delivery address location was not saved.</p>{% endif %}
+      </div>
+    {% endif %}
+  </article>
+</section>
+{% endblock %}

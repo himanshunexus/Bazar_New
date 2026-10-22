@@ -15,6 +15,10 @@ def category_detail(request, slug):
     qs = category.shops.active()
     city = request.GET.get("city")
     pincode = request.GET.get("pincode")
+    if request.user.is_authenticated:
+        address = request.user.addresses.filter(is_default=True).first()
+        if address:
+            pincode = address.pincode
     if city:
         qs = qs.filter(city__iexact=city)
     if pincode:

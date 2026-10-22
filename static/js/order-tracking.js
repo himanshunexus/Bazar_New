@@ -32,21 +32,34 @@
   function initializeRiderMap() {
     const element = document.getElementById("rider-map");
     if (!element || typeof L === "undefined") return;
-    const map = L.map(element).setView([22.2887, 73.3634], 12);
+    const shopPoint = [Number(element.dataset.shopLat), Number(element.dataset.shopLng)];
+    const destinationPoint = [Number(element.dataset.destinationLat), Number(element.dataset.destinationLng)];
+    if (![...shopPoint, ...destinationPoint].every(Number.isFinite)) return;
+    const map = L.map(element);
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 19, attribution: "&copy; OpenStreetMap contributors",
     }).addTo(map);
-    const marker = L.marker([22.2887, 73.3634]);
+    L.marker(shopPoint).addTo(map).bindPopup("Shop");
+    L.marker(destinationPoint).addTo(map).bindPopup("Delivery address");
+    const routePoints = [shopPoint, destinationPoint];
+    L.polyline(routePoints, {color: "#c76b2b", weight: 4, opacity: 0.65, dashArray: "8 8"}).addTo(map);
+    const bounds = L.latLngBounds(routePoints);
+    map.fitBounds(bounds, {padding: [32, 32], maxZoom: 14});
+    let marker = null;
     const status = document.getElementById("rider-location-status");
+    if (!element.dataset.locationUrl || !status) return;
     async function refresh() {
       try {
         const response = await fetch(element.dataset.locationUrl, {headers: {"Accept": "application/json"}});
         if (!response.ok) return;
         const {location} = await response.json();
-        if (!location) { status.textContent = "Waiting for the rider to share their location."; return; }
+        if (!location) { status.textContent = "Waiting for the rider to share a recent location."; return; }
         const point = [location.latitude, location.longitude];
-        marker.setLatLng(point).addTo(map);
-        map.setView(point, 15);
+        if (marker) marker.setLatLng(point);
+        else marker = L.marker(point).addTo(map);
+        marker.bindPopup("Rider's latest location");
+        bounds.extend(point);
+        map.fitBounds(bounds, {padding: [32, 32], maxZoom: 15});
         status.textContent = `Rider location updated ${new Date(location.updated_at).toLocaleTimeString()}.`;
       } catch (_) { status.textContent = "Rider location is temporarily unavailable."; }
     }

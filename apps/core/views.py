@@ -15,21 +15,32 @@ from .ml_client import get_recommendations, hydrate_products
 
 
 def home(request):
+    profile_pincode = ""
     lat = request.session.get("lat")
     lng = request.session.get("lng")
     location_missing = lat in (None, "") or lng in (None, "")
-    if request.user.is_authenticated and location_missing:
+    if request.user.is_authenticated:
         address = request.user.addresses.filter(is_default=True).first()
-        if address and address.latitude is not None and address.longitude is not None:
-            lat, lng = str(address.latitude), str(address.longitude)
-            location_missing = False
+        if address:
+            profile_pincode = address.pincode
+            # A saved profile address wins over a stale browser/session location.
+            if address.latitude is not None and address.longitude is not None:
+                lat, lng = str(address.latitude), str(address.longitude)
+                location_missing = False
+            else:
+                lat = lng = None
+                location_missing = True
     if location_missing:
-        lat, lng = settings.DEFAULT_LAT, settings.DEFAULT_LNG
+        if not profile_pincode:
+            lat, lng = settings.DEFAULT_LAT, settings.DEFAULT_LNG
     radius = request.GET.get("radius") or request.session.get("radius_km") or settings.DEFAULT_RADIUS_KM
-    shops = Shop.objects.nearby(lat, lng, radius) if lat is not None and lng is not None else Shop.objects.active()[:12]
+    if profile_pincode:
+        shops = list(Shop.objects.active().filter(pincode=profile_pincode).select_related("category")[:12])
+    else:
+        shops = Shop.objects.nearby(lat, lng, radius) if lat is not None and lng is not None else Shop.objects.active()[:12]
     recent_ids = request.session.get("recent_product_ids", []) + Cart(request).product_ids()
     rec_ids = get_recommendations(request.user.id if request.user.is_authenticated else None, recent_ids, 10)
-    recommendations = hydrate_products(rec_ids, lat, lng, radius)
+    recommendations = hydrate_products(rec_ids, lat, lng, radius, pincode=profile_pincode or None)
     return render(
         request,
         "core/home.html",
@@ -38,6 +49,7 @@ def home(request):
             "categories": ShopCategory.objects.all()[:12],
             "recommendations": recommendations,
             "radius": radius,
+            "profile_pincode": profile_pincode,
         },
     )
 
@@ -47,8 +59,16 @@ def search(request):
     shops = Shop.objects.none()
     products = Product.objects.none()
     if q:
-        shops = Shop.objects.active().filter(name__icontains=q).select_related("category")[:10]
-        products = Product.objects.filter(is_active=True, stock__gt=0, shop__is_active=True, name__icontains=q).select_related("shop")[:10]
+        location_filter = {}
+        if request.user.is_authenticated:
+            address = request.user.addresses.filter(is_default=True).first()
+            if address:
+                location_filter["pincode"] = address.pincode
+        shops = Shop.objects.active().filter(name__icontains=q, **location_filter).select_related("category")[:10]
+        product_qs = Product.objects.filter(is_active=True, stock__gt=0, shop__is_active=True, name__icontains=q)
+        if location_filter:
+            product_qs = product_qs.filter(shop__pincode=location_filter["pincode"])
+        products = product_qs.select_related("shop")[:10]
     return render(request, "core/partials/search_results.html", {"q": q, "shops": shops, "products": products})
 
 

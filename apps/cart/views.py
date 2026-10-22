@@ -98,6 +98,31 @@ def order_detail(request, pk):
 
 
 @login_required
+def track_order(request, pk):
+    order = get_object_or_404(
+        request.user.orders.select_related("shop", "delivery_agent", "group").prefetch_related("items"), pk=pk
+    )
+    steps = [
+        (Order.Status.PLACED, "Order placed", "We received your order."),
+        (Order.Status.CONFIRMED, "Preparing your order", "The shop is confirming and packing your items."),
+        (Order.Status.DISPATCHED, "Ready to ship", "A delivery partner has been assigned and picked up your order."),
+        (Order.Status.OUT_FOR_DELIVERY, "On the way", "Your delivery partner is heading to your address."),
+        (Order.Status.DELIVERED, "Delivered", "Your order has reached you."),
+    ]
+    progress = {status: index for index, (status, _label, _description) in enumerate(steps)}
+    current_index = progress.get(order.status, -1)
+    timeline = [
+        {"label": label, "description": description, "complete": index <= current_index, "current": index == current_index}
+        for index, (_status, label, description) in enumerate(steps)
+    ]
+    return render(request, "cart/order_tracking.html", {
+        "order": order,
+        "timeline": timeline,
+        "cancelled": order.status == Order.Status.CANCELLED,
+    })
+
+
+@login_required
 @require_http_methods(["POST"])
 def reorder(request, pk):
     order = get_object_or_404(request.user.orders.prefetch_related("items__product"), pk=pk)

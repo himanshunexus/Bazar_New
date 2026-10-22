@@ -82,12 +82,20 @@ def get_recommendations(user_id, recent_product_ids, top_n=10):
         return get_trending_product_ids(top_n)
 
 
-def hydrate_products(product_ids, lat=None, lng=None, radius_km=None):
+def hydrate_products(product_ids, lat=None, lng=None, radius_km=None, pincode=None):
     from apps.products.models import Product
     from apps.shops.models import Shop
 
     product_ids = list(OrderedDict.fromkeys(product_ids))
     qs = Product.objects.select_related("shop").filter(is_active=True, stock__gt=0, shop__is_active=True)
+    if pincode:
+        qs = qs.filter(shop__pincode=pincode)
+        if product_ids:
+            order = Case(*[When(pk=pk, then=Value(pos)) for pos, pk in enumerate(product_ids)], output_field=IntegerField())
+            ranked = list(qs.filter(id__in=product_ids).order_by(order)[:10])
+            if ranked:
+                return ranked
+        return list(qs.order_by("-created_at", "name")[:10])
     if lat is not None and lng is not None:
         shops = Shop.objects.nearby(lat, lng, radius_km or settings.DEFAULT_RADIUS_KM)
         shop_ids = [shop.id for shop in shops]
