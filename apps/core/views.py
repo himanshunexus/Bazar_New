@@ -64,17 +64,27 @@ def search(request):
     products = Product.objects.none()
     if q:
         nearby_shop_ids = None
+        profile_pincode = ""
         if request.user.is_authenticated:
             address = request.user.addresses.filter(is_default=True).first()
             if address and address.latitude is not None and address.longitude is not None:
                 nearby_shop_ids = [shop.pk for shop in Shop.objects.active().nearby(address.latitude, address.longitude, 5)]
             elif address:
-                nearby_shop_ids = []
+                profile_pincode = address.pincode
+        if nearby_shop_ids is None and not profile_pincode:
+            lat = request.session.get("lat", settings.DEFAULT_LAT)
+            lng = request.session.get("lng", settings.DEFAULT_LNG)
+            nearby_shop_ids = [
+                shop.pk for shop in Shop.objects.active().nearby(lat, lng, settings.DEFAULT_RADIUS_KM)
+            ]
         shops_qs = Shop.objects.active().filter(name__icontains=q).select_related("category")
         product_qs = Product.objects.filter(is_active=True, stock__gt=0, shop__is_active=True, name__icontains=q)
         if nearby_shop_ids is not None:
             shops_qs = shops_qs.filter(pk__in=nearby_shop_ids)
             product_qs = product_qs.filter(shop_id__in=nearby_shop_ids)
+        elif profile_pincode:
+            shops_qs = shops_qs.filter(pincode=profile_pincode)
+            product_qs = product_qs.filter(shop__pincode=profile_pincode)
         shops = shops_qs[:10]
         products = product_qs.select_related("shop").prefetch_related("images")[:10]
     return render(request, "core/partials/search_results.html", {"q": q, "shops": shops, "products": products})

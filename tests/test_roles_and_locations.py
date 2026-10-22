@@ -127,3 +127,30 @@ def test_track_order_link_opens_order_detail(client, customer, product):
     response = client.get("/cart/orders/")
     assert response.status_code == 200
     assert f'href="/cart/orders/{group.orders.get().pk}/"' in response.content.decode()
+
+
+@pytest.mark.django_db
+def test_search_uses_profile_pincode_when_saved_coordinates_are_missing(client, customer, shop, product, category):
+    from apps.accounts.models import Address
+    from apps.products.models import Product
+
+    Address.objects.create(
+        user=customer, full_name="Customer", phone="9876543211", line1="Home", city="Delhi",
+        pincode=shop.pincode, is_default=True,
+    )
+    far_owner = User.objects.create_user("other-pin-seller", "other-pin@example.com", password="pw", role=User.Role.SELLER)
+    far_shop = Shop.objects.create(
+        owner=far_owner, category=category, name="Other Pin Mart", slug="other-pin-mart",
+        phone="9123456786", address="Other pin", city=shop.city, pincode="110002",
+        latitude=shop.latitude, longitude=shop.longitude,
+    )
+    far_product = Product.objects.create(
+        shop=far_shop, name=product.name, price=product.price, stock=5, unit_label=product.unit_label,
+    )
+    client.force_login(customer)
+
+    response = client.get("/search/", {"q": product.name})
+
+    assert response.status_code == 200
+    assert list(response.context["products"]) == [product]
+    assert far_product not in response.context["products"]
