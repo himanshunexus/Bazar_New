@@ -121,6 +121,9 @@ LOGOUT_REDIRECT_URL = "core:home"
 ML_SERVICE_URL = env("ML_SERVICE_URL", default="http://localhost:8000/predict")
 DEFAULT_LAT = env("DEFAULT_LAT")
 DEFAULT_LNG = env("DEFAULT_LNG")
+# Older Render environments may still carry the project's former Delhi demo coordinates.
+if (DEFAULT_LAT, DEFAULT_LNG) == (28.6139, 77.2090):
+    DEFAULT_LAT, DEFAULT_LNG = 22.2887, 73.3634
 DEFAULT_RADIUS_KM = env("DEFAULT_RADIUS_KM")
 
 SESSION_COOKIE_HTTPONLY = True
