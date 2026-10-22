@@ -1,3 +1,5 @@
+import logging
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import connection
@@ -12,6 +14,8 @@ from apps.products.models import Product
 from apps.shops.models import Shop, ShopCategory
 
 from .ml_client import get_recommendations, hydrate_products
+
+logger = logging.getLogger(__name__)
 
 
 def home(request):
@@ -96,8 +100,9 @@ def healthz(request):
         with connection.cursor() as cursor:
             cursor.execute("select 1")
             cursor.fetchone()
-    except Exception as exc:
-        return JsonResponse({"ok": False, "error": str(exc)}, status=503)
+    except Exception:
+        logger.exception("Health check database probe failed")
+        return JsonResponse({"ok": False, "error": "Service temporarily unavailable."}, status=503)
     return JsonResponse({"ok": True})
 
 

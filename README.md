@@ -1,76 +1,73 @@
 # BAZAR
 
-BAZAR is a Django 5.1 hyperlocal marketplace for India. Customers discover nearby shops, add products from multiple shops to one session cart, and place Cash on Delivery orders. Checkout splits the cart into one order per shop.
+BAZAR is a Django marketplace for discovering neighbourhood shops and ordering local products for cash on delivery. It includes customer, shop-owner/staff, rider, and administrator workflows, a location-aware shop map, order tracking, product photos, and an optional ML recommendation service.
 
-## Local Setup
+## Features
+
+- Shop and product discovery scoped to the customer’s delivery area, with a 5 km checkout limit.
+- Cart checkout, shop order management, rider assignment and status updates, and customer order tracking.
+- Orders without a rider are cancelled after five minutes when the cancellation command runs; see **Operations**.
+- Role-based customer, shop, staff, rider, and admin access.
+- Optional recommendation API with a trending-products fallback when the model service is unavailable.
+- PostgreSQL for production, Cloudinary for product images, and a separate FastAPI recommendation service.
+
+## Run locally
+
+Requirements: Python 3.11+ and PostgreSQL (or SQLite for a lightweight local run).
 
 ```bash
-cp .env.example .env
-docker compose up -d db
 python3 -m venv .venv
-. .venv/bin/activate
+source .venv/bin/activate
 pip install -r requirements.txt
+cp .env.example .env
+```
+
+Set a local `SECRET_KEY` and `DATABASE_URL` in `.env`. For PostgreSQL, create the database first. For SQLite, remove `DATABASE_URL` so Django uses `db.sqlite3`.
+
+```bash
 python manage.py migrate
 python manage.py seed_demo
 python manage.py runserver
 ```
 
-Run tests:
+Open <http://127.0.0.1:8000/>. Run the test suite with:
 
 ```bash
 pytest
 ```
 
-Run the ML service locally:
+## Services
 
-```bash
-docker compose up --build ml
-```
+| Service | Entrypoint | Purpose |
+| --- | --- | --- |
+| Django web | `config.wsgi:application` | Marketplace, accounts, shops, products, cart, orders, and admin |
+| Recommendation API | `ml_service/app.py` | FastAPI endpoint serving product recommendations |
 
-Free-tier Render services can sleep. The first ML call may time out; the Django app falls back to trending active products and opens a 30-second circuit breaker.
+Run the model service locally with `docker compose up --build ml`. Set `ML_SERVICE_URL` to its `/predict` endpoint. If it is unavailable, the web app serves trending products instead.
 
-## Required Environment Variables
+## Configuration
 
-- `SECRET_KEY`
-- `DEBUG`
-- `ALLOWED_HOSTS`
-- `CSRF_TRUSTED_ORIGINS`
-- `DATABASE_URL`
-- `DB_CONN_MAX_AGE`
-- `DB_SSL_REQUIRE`
-- `DISABLE_SERVER_SIDE_CURSORS`
-- `CLOUDINARY_CLOUD_NAME`
-- `CLOUDINARY_API_KEY`
-- `CLOUDINARY_API_SECRET`
-- `ML_SERVICE_URL`
-- `DEFAULT_LAT`
-- `DEFAULT_LNG`
-- `DEFAULT_RADIUS_KM`
+Copy `.env.example` and set values for your environment. Production requires `SECRET_KEY`, `DATABASE_URL`, `ALLOWED_HOSTS`, and `CSRF_TRUSTED_ORIGINS`. Configure `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, and `CLOUDINARY_API_SECRET` to enable managed product-photo uploads. `DEFAULT_LAT`, `DEFAULT_LNG`, and `DEFAULT_RADIUS_KM` set the default service area; the default centre is near Parul University and the radius is 5 km.
+
+For Supabase PostgreSQL, use its pooler URL and set `DB_SSL_REQUIRE=True`. Set `DISABLE_SERVER_SIDE_CURSORS=True` when using transaction pooling. Do not commit `.env` or production credentials.
 
 ## Deployment
 
-Render uses `render.yaml`.
+Render configuration is in `render.yaml`. The Django service runs `./build.sh`, starts Gunicorn, and exposes `/healthz`. The recommendation service builds from `ml_service/Dockerfile` and exposes `/health`.
 
-- `bazar-web`: native Python service, build command `./build.sh`, start command `gunicorn config.wsgi:application`, health check `/healthz`.
-- `bazar-ml`: Docker service with `ml_service/Dockerfile`, health check `/health`.
+The web build installs dependencies, collects static files, applies migrations, ensures the configured superuser exists, seeds product images, and applies the database lockdown command. Demo account and Parul-area sample data are only seeded when `SEED_ON_DEPLOY=true`; set `SEED_DEMO_PASSWORD` before enabling it. Configure `DJANGO_SUPERUSER_USERNAME`, `DJANGO_SUPERUSER_EMAIL`, and `DJANGO_SUPERUSER_PASSWORD` to create or update the admin account.
 
-For Supabase, use the pooler connection string. If the pooler is transaction mode, set `DISABLE_SERVER_SIDE_CURSORS=True`. Run `python manage.py lockdown_db` after migrations.
-The production build requires `DATABASE_URL` to be configured as a PostgreSQL URL; it will fail rather than migrate a local SQLite database.
+## Operations
 
-## Persistent Supabase demo data
-
-Seed reproducible demo data directly into the configured database:
+Run pending unassigned-order cancellations with:
 
 ```bash
-DATABASE_URL='postgresql://...' python manage.py migrate
-DATABASE_URL='postgresql://...' python manage.py seed_production --confirm
+python manage.py cancel_unassigned_orders
 ```
 
-Set `SEED_DEMO_PASSWORD` to choose the demo account password. Local seed commands generate a one-time password only when it is omitted. Render requires this secret when `SEED_ON_DEPLOY=true`, and seeds the marketplace around Parul University in Limda. To create an admin idempotently, set `DJANGO_SUPERUSER_USERNAME`, `DJANGO_SUPERUSER_EMAIL`, and `DJANGO_SUPERUSER_PASSWORD`, then run `python manage.py ensure_superuser`.
+Schedule this command to run once per minute in the hosting platform for automatic five-minute cancellation. The command is safe to run repeatedly.
 
-`seed_production` creates only `demo`-prefixed users, shops, products, reviews, and orders. The Render build also seeds public Parul-area business listings with clearly marked sample catalogues and rider accounts. Use `--dry-run` to make no changes and `--wipe-demo --confirm` to remove only `demo`-prefixed records before reseeding. The command requires `--confirm` for non-local database hosts.
-
-After changing the catalogue or order history materially, export delivered orders and retrain the recommendation model:
+Retrain recommendations after meaningful order-history changes:
 
 ```bash
 python manage.py export_orders_for_ml orders.csv
@@ -78,6 +75,4 @@ cd ml_service
 python train.py --csv ../orders.csv
 ```
 
-Commit the resulting `ml_service/model/model.pkl` and `ml_service/model/product_ids.pkl`. The build runs `ensure_superuser` on every deploy and runs the seed only when `SEED_ON_DEPLOY=true`.
-
-Payments are COD only. The codebase intentionally contains no online payment gateway integrations.
+Commit the updated `ml_service/model/model.pkl` and `ml_service/model/product_ids.pkl` with the corresponding code/data change. Payments currently support cash on delivery only.

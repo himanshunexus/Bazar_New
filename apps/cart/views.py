@@ -91,19 +91,21 @@ def order_history(request):
 
 @login_required
 def order_detail(request, pk):
-    cancel_unassigned_orders(order_id=pk)
     order = get_object_or_404(
         request.user.orders.select_related("shop", "delivery_agent").prefetch_related("items"), pk=pk
     )
+    cancel_unassigned_orders(order_id=order.pk)
+    order.refresh_from_db()
     return render(request, "cart/order_detail.html", {"order": order})
 
 
 @login_required
 def track_order(request, pk):
-    cancel_unassigned_orders(order_id=pk)
     order = get_object_or_404(
         request.user.orders.select_related("shop", "delivery_agent", "group").prefetch_related("items"), pk=pk
     )
+    cancel_unassigned_orders(order_id=order.pk)
+    order.refresh_from_db()
     steps = [
         (Order.Status.PLACED, "Order placed", "We received your order."),
         (Order.Status.CONFIRMED, "Preparing your order", "The shop is confirming and packing your items."),
@@ -199,7 +201,7 @@ def dispatch_order(request, pk):
     with transaction.atomic():
         order = get_object_or_404(request.user.shop.orders.select_for_update(), pk=pk)
         agent = get_object_or_404(
-            DeliveryAgent.objects.select_for_update(),
+            DeliveryAgent.objects.select_for_update().filter(Q(shop=request.user.shop) | Q(shop__isnull=True)),
             pk=request.POST.get("delivery_agent"),
             is_available=True,
         )

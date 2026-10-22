@@ -139,3 +139,48 @@ def test_order_details_expire_unassigned_order_and_show_customer_message(client,
     assert b"No rider was available within 5 minutes" in response.content
     order.refresh_from_db()
     assert order.status == Order.Status.CANCELLED
+
+
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.parametrize("path_suffix", ["", "track/"])
+def test_other_customer_cannot_trigger_order_cancellation(client, customer, product, path_suffix):
+    from datetime import timedelta
+
+    from django.utils import timezone
+    from apps.accounts.models import User
+
+    group = place_order(customer, FakeCart({str(product.id): 1}), ADDRESS)
+    order = group.orders.get()
+    Order.objects.filter(pk=order.pk).update(created_at=timezone.now() - timedelta(minutes=6))
+    other_customer = User.objects.create_user("another-customer", "another@example.com", password="pw")
+    client.force_login(other_customer)
+
+    response = client.get(f"/cart/orders/{order.pk}/{path_suffix}")
+    order.refresh_from_db()
+    assert response.status_code == 404
+    assert order.status == Order.Status.PLACED
+
+
+@pytest.mark.django_db(transaction=True)
+def test_seller_cannot_assign_another_shops_rider(client, customer, seller, product, category):
+    from apps.accounts.models import User
+    from apps.cart.models import DeliveryAgent
+    from apps.shops.models import Shop
+
+    group = place_order(customer, FakeCart({str(product.id): 1}), ADDRESS)
+    order = group.orders.get()
+    other_owner = User.objects.create_user("other-owner", "other-owner@example.com", password="pw", role=User.Role.SELLER)
+    other_shop = Shop.objects.create(
+        owner=other_owner, category=category, name="Other Shop", slug="other-shop",
+        phone="9123456701", address="Other", city="Delhi", pincode="110001",
+        latitude="28.613900", longitude="77.209000",
+    )
+    foreign_agent = DeliveryAgent.objects.create(
+        shop=other_shop, name="Foreign Rider", phone="9123456702", is_available=True
+    )
+    client.force_login(seller)
+
+    response = client.post(f"/cart/seller/orders/{order.pk}/dispatch/", {"delivery_agent": foreign_agent.pk})
+    order.refresh_from_db()
+    assert response.status_code == 404
+    assert order.delivery_agent_id is None
