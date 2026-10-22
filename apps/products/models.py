@@ -88,6 +88,10 @@ class ProductImage(models.Model):
             models.CheckConstraint(check=Q(position__gte=0), name="product_image_position_non_negative"),
         ]
 
+    @property
+    def secure_url(self):
+        return self.image.build_url(secure=True) if self.image else ""
+
     def clean(self):
         super().clean()
         qs = ProductImage.objects.filter(product=self.product)
