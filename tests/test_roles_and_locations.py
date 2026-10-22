@@ -105,3 +105,25 @@ def test_rider_cannot_update_an_unassigned_order(customer, product):
     DeliveryAgent.objects.create(user=rider, name="Rider Two", phone="9876543213")
     with pytest.raises(PermissionDenied):
         transition_order(group.orders.get(), Order.Status.OUT_FOR_DELIVERY, rider)
+
+
+@pytest.mark.django_db
+def test_track_order_link_opens_order_detail(client, customer, product):
+    from apps.cart.services import place_order
+
+    class Cart:
+        data = {str(product.pk): 1}
+
+        def __len__(self):
+            return 1
+
+        def clear(self):
+            pass
+
+    group = place_order(customer, Cart(), {
+        "full_name": "Customer", "phone": "9876543211", "line1": "Home", "line2": "", "city": "Delhi", "pincode": "110001",
+    })
+    client.force_login(customer)
+    response = client.get("/cart/orders/")
+    assert response.status_code == 200
+    assert f'href="/cart/orders/{group.orders.get().pk}/"' in response.content.decode()
