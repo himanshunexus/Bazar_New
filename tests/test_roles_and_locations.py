@@ -32,6 +32,32 @@ def test_home_defaults_to_configured_location(client, shop, category, monkeypatc
 
 
 @pytest.mark.django_db
+def test_recommendations_fall_back_to_nearby_stock_when_model_products_are_elsewhere(product, category):
+    from apps.core.ml_client import hydrate_products
+    from apps.products.models import Product
+
+    far_owner = User.objects.create_user("far-rec-seller", "far-rec@example.com", password="pw", role=User.Role.SELLER)
+    far_shop = Shop.objects.create(
+        owner=far_owner,
+        category=category,
+        name="Far shop",
+        slug="far-recommendation-shop",
+        phone="9123456787",
+        address="Far away",
+        city=product.shop.city,
+        pincode=product.shop.pincode,
+        latitude=Decimal("28.800000"),
+        longitude=Decimal("77.209000"),
+    )
+    far_product = Product.objects.create(shop=far_shop, name="Far rice", price="100.00", stock=5, unit_label="1 kg")
+
+    recommendations = hydrate_products(
+        [far_product.id], product.shop.latitude, product.shop.longitude, radius_km=5
+    )
+    assert [item.id for item in recommendations] == [product.id]
+
+
+@pytest.mark.django_db
 def test_shop_map_limits_same_pincode_results_to_radius(client, shop, category):
     Shop.objects.create(
         owner=User.objects.create_user("far-seller", "far@example.com", password="pw", role=User.Role.SELLER),

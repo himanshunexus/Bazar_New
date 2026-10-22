@@ -87,11 +87,21 @@ def hydrate_products(product_ids, lat=None, lng=None, radius_km=None):
     from apps.shops.models import Shop
 
     product_ids = list(OrderedDict.fromkeys(product_ids))
+    qs = Product.objects.select_related("shop").filter(is_active=True, stock__gt=0, shop__is_active=True)
+    if lat is not None and lng is not None:
+        shops = Shop.objects.nearby(lat, lng, radius_km or settings.DEFAULT_RADIUS_KM)
+        shop_ids = [shop.id for shop in shops]
+        if not shop_ids:
+            return []
+        if product_ids:
+            order = Case(*[When(pk=pk, then=Value(pos)) for pos, pk in enumerate(product_ids)], output_field=IntegerField())
+            ranked = list(qs.filter(id__in=product_ids, shop_id__in=shop_ids).order_by(order))
+            if ranked:
+                return ranked
+        # A global model may know products from another market. Keep the panel useful
+        # in a new area by falling back to available inventory from nearby shops.
+        return list(qs.filter(shop_id__in=shop_ids).order_by("-created_at", "name")[:10])
     if not product_ids:
         return []
     order = Case(*[When(pk=pk, then=Value(pos)) for pos, pk in enumerate(product_ids)], output_field=IntegerField())
-    qs = Product.objects.select_related("shop").filter(id__in=product_ids, is_active=True, stock__gt=0, shop__is_active=True)
-    if lat is not None and lng is not None:
-        shops = Shop.objects.nearby(lat, lng, radius_km or settings.DEFAULT_RADIUS_KM)
-        qs = qs.filter(shop_id__in=[shop.id for shop in shops])
-    return list(qs.order_by(order))
+    return list(qs.filter(id__in=product_ids).order_by(order))
