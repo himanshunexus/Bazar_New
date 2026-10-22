@@ -151,6 +151,8 @@ h1 { font-size: 24px; letter-spacing: -.03em; }
 h2 { font-size: 18px; letter-spacing: -.02em; }
 h3 { margin-bottom: .35rem; font-size: 15px; }
 .section-head a { color: var(--primary-container); font-size: 12px; font-weight: 700; }
+.section-head a.button { color: #fff; }
+.section-head a.button.secondary { color: var(--primary); }
 
 .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
 .compact { grid-template-columns: repeat(8, minmax(0, 1fr)); }
