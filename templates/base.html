@@ -18,7 +18,8 @@
       <a href="{% url 'cart:detail' %}">Cart</a>
       {% if request.user.is_authenticated %}
         {% if request.user.is_seller %}<a href="{% url 'core:seller_dashboard' %}">Seller</a>{% endif %}
-        <a href="{% url 'cart:history' %}">Orders</a>
+        {% if request.user.role == 'RIDER' %}<a href="{% url 'cart:rider_dashboard' %}">Rider dashboard</a>{% else %}<a href="{% url 'cart:history' %}">Orders</a>{% endif %}
+        {% if request.user.is_superuser %}<a href="{% url 'admin:index' %}">Admin</a>{% endif %}
         <a href="{% url 'accounts:profile' %}">Profile</a>
         <form class="logout-form" method="post" action="{% url 'accounts:logout' %}">{% csrf_token %}<button class="button subtle">Logout</button></form>
       {% else %}

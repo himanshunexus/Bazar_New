@@ -73,9 +73,9 @@ def shop_map_api(request):
         if lat is not None and lng is not None:
             nearby = Shop.objects.active().nearby(lat, lng, settings.DEFAULT_RADIUS_KM)
             nearby_by_id = {shop.id: shop for shop in nearby}
+            shops = [shop for shop in shops if shop.id in nearby_by_id]
             for shop in shops:
-                if shop.id in nearby_by_id:
-                    shop.distance_m = nearby_by_id[shop.id].distance_m
+                shop.distance_m = nearby_by_id[shop.id].distance_m
         shops.sort(key=lambda shop: getattr(shop, "distance_m", float("inf")))
     elif lat is not None and lng is not None:
         shops = Shop.objects.active().nearby(lat, lng, settings.DEFAULT_RADIUS_KM)

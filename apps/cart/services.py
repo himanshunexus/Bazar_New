@@ -136,7 +136,12 @@ ALLOWED_TRANSITIONS = {
 
 
 def transition_order(order, new_status, actor):
-    if getattr(actor, "is_seller", False):
+    if getattr(actor, "role", None) == "RIDER":
+        if not hasattr(actor, "delivery_agent") or order.delivery_agent_id != actor.delivery_agent.id:
+            raise PermissionDenied("You can update only orders assigned to you.")
+        if new_status not in {Order.Status.OUT_FOR_DELIVERY, Order.Status.DELIVERED}:
+            raise PermissionDenied("Riders can only update delivery progress.")
+    elif getattr(actor, "is_seller", False):
         if not hasattr(actor, "shop") or order.shop_id != actor.shop.id:
             raise PermissionDenied("You can update only your own shop orders.")
     elif order.customer_id != actor.id or new_status != Order.Status.CANCELLED or order.status != Order.Status.PLACED:

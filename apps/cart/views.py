@@ -2,6 +2,9 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
+from django.http import JsonResponse
+from django.core.validators import RegexValidator
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from datetime import timedelta
@@ -14,6 +17,8 @@ from .cart import Cart
 from .forms import CheckoutForm
 from .models import DeliveryAgent, Order
 from .services import CheckoutError, place_order, transition_order
+
+phone_validator = RegexValidator(r"^\d{10}$", "Enter a 10-digit mobile number.")
 
 
 def detail(request):
@@ -107,7 +112,58 @@ def reorder(request, pk):
 @seller_required
 def seller_orders(request):
     orders = request.user.shop.orders.prefetch_related("items").select_related("customer", "delivery_agent").all()
-    return render(request, "cart/seller_orders.html", {"orders": orders, "delivery_agents": DeliveryAgent.objects.filter(is_available=True)})
+    delivery_agents = DeliveryAgent.objects.filter(is_available=True).filter(Q(shop=request.user.shop) | Q(shop__isnull=True))
+    return render(request, "cart/seller_orders.html", {"orders": orders, "delivery_agents": delivery_agents})
+
+
+@seller_required
+@require_http_methods(["GET", "POST"])
+def seller_staff(request):
+    issued_password = None
+    if request.method == "POST":
+        action = request.POST.get("action")
+        if action == "add":
+            name = (request.POST.get("name") or "").strip()
+            phone = (request.POST.get("phone") or "").strip()
+            vehicle = (request.POST.get("vehicle_number") or "").strip()
+            try:
+                phone_validator(phone)
+                if not name:
+                    raise ValueError("Enter the rider's name.")
+                with transaction.atomic():
+                    agent = DeliveryAgent.objects.filter(phone=phone).first()
+                    if agent and agent.shop_id not in {None, request.user.shop.pk}:
+                        raise ValueError("This delivery partner already belongs to another shop.")
+                    user = agent.user if agent else None
+                    username = f"rider_{phone}"
+                    if user is None:
+                        user = request.user.__class__.objects.filter(username=username).first()
+                        if user and user.role != "RIDER":
+                            raise ValueError("This rider login name is already in use.")
+                        if user is None:
+                            import secrets
+                            from django.contrib.auth import get_user_model
+
+                            password = secrets.token_urlsafe(12)
+                            user = get_user_model().objects.create_user(
+                                username=username, email=f"{username}@bazar.local", phone=phone,
+                                role="RIDER", password=password,
+                            )
+                            issued_password = password
+                    agent, _ = DeliveryAgent.objects.update_or_create(
+                        phone=phone,
+                        defaults={"name": name, "vehicle_number": vehicle, "user": user, "shop": request.user.shop, "is_available": True},
+                    )
+                messages.success(request, f"{agent.name} added to your delivery team. Login username: {username}.")
+            except Exception as exc:
+                messages.error(request, str(exc))
+        elif action == "availability":
+            agent = get_object_or_404(DeliveryAgent, pk=request.POST.get("agent_id"), shop=request.user.shop)
+            agent.is_available = not agent.is_available
+            agent.save(update_fields=["is_available"])
+            messages.success(request, f"{agent.name} marked {'available' if agent.is_available else 'unavailable'}.")
+        return render(request, "cart/seller_staff.html", {"agents": request.user.shop.delivery_agents.select_related("user").all(), "issued_password": issued_password})
+    return render(request, "cart/seller_staff.html", {"agents": request.user.shop.delivery_agents.select_related("user").all()})
 
 
 @seller_required
@@ -136,6 +192,59 @@ def dispatch_order(request, pk):
 
 
 @login_required
+def rider_dashboard(request):
+    if getattr(request.user, "role", None) != "RIDER" or not hasattr(request.user, "delivery_agent"):
+        return render(request, "core/not_seller.html", {"message": "Rider access is required."}, status=403)
+    agent = request.user.delivery_agent
+    orders = agent.orders.select_related("shop", "customer", "group").prefetch_related("items").all()
+    return render(request, "cart/rider_dashboard.html", {"agent": agent, "orders": orders})
+
+
+@login_required
+@require_http_methods(["POST"])
+def update_rider_location(request):
+    if getattr(request.user, "role", None) != "RIDER" or not hasattr(request.user, "delivery_agent"):
+        return JsonResponse({"ok": False, "error": "Rider access is required."}, status=403)
+    try:
+        latitude = float(request.POST.get("latitude"))
+        longitude = float(request.POST.get("longitude"))
+        if not -90 <= latitude <= 90 or not -180 <= longitude <= 180:
+            raise ValueError
+    except (TypeError, ValueError):
+        return JsonResponse({"ok": False, "error": "Invalid location coordinates."}, status=400)
+    agent = request.user.delivery_agent
+    agent.latitude, agent.longitude = latitude, longitude
+    agent.location_updated_at = timezone.now()
+    agent.save(update_fields=["latitude", "longitude", "location_updated_at"])
+    return JsonResponse({"ok": True, "updated_at": agent.location_updated_at.isoformat()})
+
+
+@login_required
+def rider_location_for_order(request, pk):
+    order = get_object_or_404(Order.objects.select_related("shop", "delivery_agent"), pk=pk)
+    allowed = (
+        order.customer_id == request.user.pk
+        or (getattr(request.user, "is_seller", False) and hasattr(request.user, "shop") and order.shop_id == request.user.shop.pk)
+        or (getattr(request.user, "role", None) == "RIDER" and hasattr(request.user, "delivery_agent") and order.delivery_agent_id == request.user.delivery_agent.pk)
+        or request.user.is_superuser
+    )
+    if not allowed:
+        return JsonResponse({"ok": False, "error": "You cannot view this delivery location."}, status=403)
+    if order.status not in {Order.Status.DISPATCHED, Order.Status.OUT_FOR_DELIVERY}:
+        return JsonResponse({"ok": True, "location": None})
+    agent = order.delivery_agent
+    if (
+        not agent or agent.latitude is None or agent.longitude is None or not agent.location_updated_at
+        or agent.location_updated_at < timezone.now() - timedelta(minutes=5)
+    ):
+        return JsonResponse({"ok": True, "location": None})
+    return JsonResponse({
+        "ok": True,
+        "location": {"latitude": float(agent.latitude), "longitude": float(agent.longitude), "updated_at": agent.location_updated_at.isoformat()},
+    })
+
+
+@login_required
 @require_http_methods(["POST"])
 def update_order_status(request, pk):
     order = get_object_or_404(Order, pk=pk)
@@ -145,4 +254,6 @@ def update_order_status(request, pk):
         messages.error(request, str(exc))
     else:
         messages.success(request, "Order updated.")
+    if getattr(request.user, "role", None) == "RIDER":
+        return redirect("cart:rider_dashboard")
     return redirect("cart:seller_orders" if getattr(request.user, "is_seller", False) else "cart:history")

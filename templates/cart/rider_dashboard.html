@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load money %}
+{% block title %}Rider Dashboard{% endblock %}
+{% block content %}
+<section class="section">
+  <h1>Rider dashboard</h1>
+  <p>{{ agent.name }} · {% if agent.is_available %}Available{% else %}On delivery{% endif %}</p>
+  <form id="location-form" hidden>{% csrf_token %}</form>
+  <button class="button" id="share-location" type="button">Share current location</button>
+  <button class="button secondary" id="stop-location" type="button" hidden>Stop sharing</button>
+  <p id="location-status" role="status" aria-live="polite"></p>
+</section>
+<section class="section">
+  <h2>Assigned deliveries</h2>
+  {% for order in orders %}
+    <article class="card">
+      <h3>{{ order.order_number }} · {{ order.get_status_display }}</h3>
+      <p>{{ order.shop.name }} → {{ order.group.delivery_address_line }}, {{ order.group.delivery_city }}</p>
+      <p>{{ order.total|inr }} · {{ order.customer.get_full_name|default:order.customer.username }}</p>
+      {% if order.group.delivery_latitude and order.group.delivery_longitude %}<a href="https://www.google.com/maps/dir/?api=1&destination={{ order.group.delivery_latitude }},{{ order.group.delivery_longitude }}" target="_blank" rel="noopener">Navigate to customer</a>{% endif %}
+      {% if order.status == "DISPATCHED" %}<form method="post" action="{% url 'cart:status' order.pk %}">{% csrf_token %}<input type="hidden" name="status" value="OUT_FOR_DELIVERY"><button class="button">Start delivery</button></form>{% endif %}
+      {% if order.status == "OUT_FOR_DELIVERY" %}<form method="post" action="{% url 'cart:status' order.pk %}">{% csrf_token %}<input type="hidden" name="status" value="DELIVERED"><button class="button">Mark delivered</button></form>{% endif %}
+    </article>
+  {% empty %}<p>No deliveries assigned.</p>{% endfor %}
+</section>
+<script>
+(() => {
+  const button = document.getElementById("share-location");
+  const stopButton = document.getElementById("stop-location");
+  const status = document.getElementById("location-status");
+  let watchId = null;
+  let lastSent = 0;
+  async function saveLocation(coords) {
+    const body = new URLSearchParams({latitude: coords.latitude, longitude: coords.longitude});
+    const csrf = document.querySelector("#location-form [name=csrfmiddlewaretoken]").value;
+    const response = await fetch("{% url 'cart:rider_location' %}", {method: "POST", headers: {"X-CSRFToken": csrf, "Content-Type": "application/x-www-form-urlencoded"}, body});
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Location update failed.");
+    lastSent = Date.now();
+    status.textContent = "Sharing your current location with assigned customers.";
+  }
+  button.addEventListener("click", () => {
+    if (!navigator.geolocation) { status.textContent = "Location is not available in this browser."; return; }
+    button.disabled = true;
+    watchId = navigator.geolocation.watchPosition(async ({coords}) => {
+      if (Date.now() - lastSent < 15000) return;
+      try { await saveLocation(coords); }
+      catch (error) { status.textContent = error.message; }
+    }, () => { status.textContent = "Location permission was denied or unavailable."; }, {enableHighAccuracy: true, maximumAge: 10000, timeout: 12000});
+    button.hidden = true;
+    stopButton.hidden = false;
+    button.disabled = false;
+    status.textContent = "Waiting for a location fix…";
+  });
+  stopButton.addEventListener("click", () => {
+    if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+    watchId = null;
+    stopButton.hidden = true;
+    button.hidden = false;
+    status.textContent = "Location sharing stopped. The last saved location may remain visible briefly.";
+  });
+})();
+</script>
+{% endblock %}

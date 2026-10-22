@@ -87,8 +87,8 @@ class Command(BaseCommand):
         configured_password = os.getenv("SEED_DEMO_PASSWORD", "").strip()
         demo_password = configured_password or secrets.token_urlsafe(18)
         generated_password = not configured_password
-        city = os.getenv("SEED_CITY", "New Delhi")
-        pincode = os.getenv("SEED_PINCODE", "110001")
+        city = os.getenv("SEED_CITY", "Limda, Waghodia")
+        pincode = os.getenv("SEED_PINCODE", "391760")
         lat, lng = Decimal(str(settings.DEFAULT_LAT)), Decimal(str(settings.DEFAULT_LNG))
         categories = {}
         for index, (slug, name, icon, _, _) in enumerate(SHOP_SPECS, 1):

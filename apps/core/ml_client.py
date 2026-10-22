@@ -44,7 +44,16 @@ def get_trending_product_ids(top_n=10):
 def get_recommendations(user_id, recent_product_ids, top_n=10):
     if cache.get(CIRCUIT_KEY):
         return get_trending_product_ids(top_n)
-    payload = {"user_id": user_id, "recent_product_ids": list(OrderedDict.fromkeys(recent_product_ids or []))[:20], "top_n": top_n}
+    history_ids = []
+    if user_id:
+        from apps.cart.models import OrderItem
+
+        history_ids = list(
+            OrderItem.objects.filter(order__customer_id=user_id, order__status="DELIVERED", product__isnull=False)
+            .order_by("-order__created_at").values_list("product_id", flat=True).distinct()[:20]
+        )
+    context_ids = list(OrderedDict.fromkeys([*(recent_product_ids or []), *history_ids]))[:20]
+    payload = {"user_id": user_id, "recent_product_ids": context_ids, "top_n": top_n}
     try:
         response = session.post(_service_url(), json=payload, timeout=1.5)
         response.raise_for_status()
@@ -82,7 +91,7 @@ def hydrate_products(product_ids, lat=None, lng=None, radius_km=None):
         return []
     order = Case(*[When(pk=pk, then=Value(pos)) for pos, pk in enumerate(product_ids)], output_field=IntegerField())
     qs = Product.objects.select_related("shop").filter(id__in=product_ids, is_active=True, stock__gt=0, shop__is_active=True)
-    if lat and lng:
+    if lat is not None and lng is not None:
         shops = Shop.objects.nearby(lat, lng, radius_km or settings.DEFAULT_RADIUS_KM)
         qs = qs.filter(shop_id__in=[shop.id for shop in shops])
     return list(qs.order_by(order))

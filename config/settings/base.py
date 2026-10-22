@@ -10,8 +10,8 @@ env = environ.Env(
     DB_CONN_MAX_AGE=(int, 600),
     DB_SSL_REQUIRE=(bool, False),
     DISABLE_SERVER_SIDE_CURSORS=(bool, False),
-    DEFAULT_LAT=(float, 28.6139),
-    DEFAULT_LNG=(float, 77.2090),
+    DEFAULT_LAT=(float, 22.2887),
+    DEFAULT_LNG=(float, 73.3634),
     DEFAULT_RADIUS_KM=(float, 5.0),
 )
 

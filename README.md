@@ -66,9 +66,9 @@ DATABASE_URL='postgresql://...' python manage.py migrate
 DATABASE_URL='postgresql://...' python manage.py seed_production --confirm
 ```
 
-Set `SEED_DEMO_PASSWORD` to choose the demo account password. If omitted, the command generates one and prints it once. Optional settings are `DEFAULT_LAT`, `DEFAULT_LNG`, `SEED_CITY`, `SEED_PINCODE`, and `SEED_ON_DEPLOY=true`. To create an admin idempotently, set `DJANGO_SUPERUSER_USERNAME`, `DJANGO_SUPERUSER_EMAIL`, and `DJANGO_SUPERUSER_PASSWORD`, then run `python manage.py ensure_superuser`.
+Set `SEED_DEMO_PASSWORD` to choose the demo account password. Local seed commands generate a one-time password only when it is omitted. Render requires this secret when `SEED_ON_DEPLOY=true`, and seeds the marketplace around Parul University in Limda. To create an admin idempotently, set `DJANGO_SUPERUSER_USERNAME`, `DJANGO_SUPERUSER_EMAIL`, and `DJANGO_SUPERUSER_PASSWORD`, then run `python manage.py ensure_superuser`.
 
-`seed_production` creates only `demo`-prefixed users, shops, products, reviews, and orders. Use `--dry-run` to make no changes and `--wipe-demo --confirm` to remove only those demo records before reseeding. The command requires `--confirm` for non-local database hosts.
+`seed_production` creates only `demo`-prefixed users, shops, products, reviews, and orders. The Render build also seeds public Parul-area business listings with clearly marked sample catalogues and rider accounts. Use `--dry-run` to make no changes and `--wipe-demo --confirm` to remove only `demo`-prefixed records before reseeding. The command requires `--confirm` for non-local database hosts.
 
 After changing the catalogue or order history materially, export delivered orders and retrain the recommendation model:
 

@@ -21,6 +21,12 @@ python manage.py collectstatic --noinput
 python manage.py migrate --noinput
 python manage.py ensure_superuser
 if [[ "${SEED_ON_DEPLOY:-false}" == "true" ]]; then
+    if [[ -z "${SEED_DEMO_PASSWORD:-}" ]]; then
+        echo "SEED_DEMO_PASSWORD must be configured before SEED_ON_DEPLOY is enabled." >&2
+        exit 1
+    fi
     python manage.py seed_production --confirm
+    python manage.py seed_parul_data
+    python manage.py seed_delivery_data
 fi
 python manage.py lockdown_db

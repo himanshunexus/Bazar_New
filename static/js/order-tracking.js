@@ -29,5 +29,31 @@
     window.setInterval(update, 1000);
   }
 
+  function initializeRiderMap() {
+    const element = document.getElementById("rider-map");
+    if (!element || typeof L === "undefined") return;
+    const map = L.map(element).setView([22.2887, 73.3634], 12);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19, attribution: "&copy; OpenStreetMap contributors",
+    }).addTo(map);
+    const marker = L.marker([22.2887, 73.3634]);
+    const status = document.getElementById("rider-location-status");
+    async function refresh() {
+      try {
+        const response = await fetch(element.dataset.locationUrl, {headers: {"Accept": "application/json"}});
+        if (!response.ok) return;
+        const {location} = await response.json();
+        if (!location) { status.textContent = "Waiting for the rider to share their location."; return; }
+        const point = [location.latitude, location.longitude];
+        marker.setLatLng(point).addTo(map);
+        map.setView(point, 15);
+        status.textContent = `Rider location updated ${new Date(location.updated_at).toLocaleTimeString()}.`;
+      } catch (_) { status.textContent = "Rider location is temporarily unavailable."; }
+    }
+    refresh();
+    window.setInterval(refresh, 15000);
+  }
+
   document.addEventListener("DOMContentLoaded", initializeCountdown);
+  document.addEventListener("DOMContentLoaded", initializeRiderMap);
 })();

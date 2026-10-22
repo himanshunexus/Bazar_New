@@ -8,11 +8,15 @@
     <a class="button" href="{% url 'products:new' %}">New product</a>
   </div>
   <div class="stats">
-    <div><strong>{{ orders.count }}</strong><span>Total orders</span></div>
+    <div><strong>{{ sales_today.count|default:0 }}</strong><span>Orders today</span></div>
+    <div><strong>{{ sales_today.total|default:0|inr }}</strong><span>Sales today</span></div>
+    <div><strong>{{ sales_month.count|default:0 }}</strong><span>Orders this month</span></div>
+    <div><strong>{{ sales_month.total|default:0|inr }}</strong><span>Sales this month</span></div>
     <div><strong>{{ low_stock|length }}</strong><span>Low-stock products</span></div>
     <div><strong>{{ shop.avg_rating }}</strong><span>Rating</span></div>
   </div>
 </section>
+<section class="section"><h2>Shop management</h2><p><a class="button secondary" href="{% url 'cart:seller_orders' %}">Manage orders</a> <a class="button secondary" href="{% url 'cart:seller_staff' %}">Manage delivery staff</a></p></section>
 <section class="section">
   <h2>Low Stock</h2>
   {% for product in low_stock %}<p>{{ product.name }} - {{ product.stock }}</p>{% empty %}<p>Stock is healthy.</p>{% endfor %}

@@ -18,6 +18,16 @@ services:
         value: "True"
       - key: SEED_ON_DEPLOY
         value: "true"
+      - key: SEED_DEMO_PASSWORD
+        sync: false
+      - key: SEED_CITY
+        value: "Limda, Waghodia"
+      - key: SEED_PINCODE
+        value: "391760"
+      - key: DEFAULT_LAT
+        value: "22.2887"
+      - key: DEFAULT_LNG
+        value: "73.3634"
       - key: CLOUDINARY_CLOUD_NAME
         sync: false
       - key: CLOUDINARY_API_KEY

@@ -1,6 +1,13 @@
 from django.contrib import admin
 
-from .models import Order, OrderGroup, OrderItem
+from .models import DeliveryAgent, Order, OrderGroup, OrderItem
+
+
+@admin.register(DeliveryAgent)
+class DeliveryAgentAdmin(admin.ModelAdmin):
+    list_display = ("name", "phone", "user", "is_available", "location_updated_at")
+    list_filter = ("is_available",)
+    search_fields = ("name", "phone", "user__username")
 
 
 class OrderItemInline(admin.TabularInline):

@@ -1,4 +1,6 @@
 from decimal import Decimal
+import os
+import secrets
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
@@ -13,14 +15,15 @@ BASE_LATITUDE = Decimal("22.2887")
 BASE_LONGITUDE = Decimal("73.3634")
 PINCODE = "391760"
 CITY = "Limda, Waghodia"
+# Store names follow current public listings; locations and inventory are demo approximations.
 
 SHOP_SPECS = [
     {
-        "slug": "parul-campus-kirana",
+        "slug": "satyam-kirana-store",
         "category": ("Grocery & Kirana", "🛒", 1),
-        "name": "Parul Campus Kirana",
-        "description": "Everyday groceries, instant meals and essentials for students.",
-        "address": "University Road, near Parul University Gate 2",
+        "name": "Satyam Kirana Store",
+        "description": "Local shop listed near Parul University. Catalogue below is sample data; confirm inventory and prices with the shop.",
+        "address": "Near Parul University, Limda, Waghodia, Vadodara 391760",
         "products": [
             ("Maggi Masala Noodles", "70 g", "15.00", 100),
             ("Britannia Bread", "400 g", "45.00", 40),
@@ -29,11 +32,11 @@ SHOP_SPECS = [
         ],
     },
     {
-        "slug": "limda-fresh-basket",
-        "category": ("Fruits & Veggies", "🥦", 2),
-        "name": "Limda Fresh Basket",
-        "description": "Fresh fruits and vegetables delivered around the campus.",
-        "address": "Limda Main Road, opposite student hostels",
+        "slug": "the-u-mart-limda",
+        "category": ("Grocery & Kirana", "🛒", 2),
+        "name": "The U Mart",
+        "description": "Public listing places this store at Limda Stand near Parul Hospital. Catalogue below is sample data; confirm inventory and prices with the shop.",
+        "address": "Shreeji Residency Complex, Limda Stand, near Parul Hospital, Waghodia 391760",
         "products": [
             ("Banana", "1 dozen", "55.00", 50),
             ("Apple", "1 kg", "160.00", 25),
@@ -42,11 +45,11 @@ SHOP_SPECS = [
         ],
     },
     {
-        "slug": "campus-bake-cafe",
+        "slug": "tea-post-parul-university",
         "category": ("Bakery & Cafe", "🥐", 3),
-        "name": "Campus Bake Cafe",
-        "description": "Quick breakfast, tea-time bakes and student-friendly snacks.",
-        "address": "Parul University Road, Limda",
+        "name": "Tea Post",
+        "description": "Public business listing at Parul University, Limda. Catalogue below is sample data; confirm inventory and prices with the shop.",
+        "address": "Parul University, Limda, Waghodia, Vadodara 391760",
         "products": [
             ("Veg Puff", "1 piece", "25.00", 60),
             ("Chocolate Muffin", "1 piece", "45.00", 45),
@@ -55,11 +58,11 @@ SHOP_SPECS = [
         ],
     },
     {
-        "slug": "amul-dairy-point",
+        "slug": "chhaswala-parul-university",
         "category": ("Dairy & Cold Drinks", "🥛", 4),
-        "name": "Amul Dairy Point",
-        "description": "Milk, dairy products and chilled drinks for hostel rooms.",
-        "address": "Limda Hostel Circle, Waghodia",
+        "name": "Chhaswala",
+        "description": "Public business listing near Parul University. Catalogue below is sample data; confirm inventory and prices with the shop.",
+        "address": "Near Parul University, Limda, Waghodia, Vadodara 391760",
         "products": [
             ("Amul Taaza Milk", "1 litre", "60.00", 60),
             ("Amul Masti Curd", "400 g", "35.00", 40),
@@ -68,29 +71,29 @@ SHOP_SPECS = [
         ],
     },
     {
-        "slug": "parul-stationery-xerox",
-        "category": ("Stationery & Xerox", "📚", 5),
-        "name": "Parul Stationery & Xerox",
-        "description": "Notes, printing, photocopying and project supplies near campus.",
-        "address": "University Road, opposite Parul Main Gate",
+        "slug": "wfc-food-court-parul",
+        "category": ("Food & Dining", "🍽️", 5),
+        "name": "WFC Food Court",
+        "description": "Public listing near Parul University. Catalogue below is sample data; confirm inventory and prices with the business.",
+        "address": "Near Parul University, Waghodia, Vadodara 391760",
         "products": [
-            ("Spiral Notebook", "200 pages", "95.00", 80),
-            ("A4 Printout", "10 pages", "10.00", 500),
-            ("Blue Ball Pens", "5 pieces", "50.00", 70),
-            ("Highlighter Set", "4 pieces", "120.00", 35),
+            ("Tea", "1 cup", "20.00", 80),
+            ("Veg Sandwich", "1 plate", "90.00", 30),
+            ("French Fries", "1 plate", "80.00", 35),
+            ("Cold Coffee", "300 ml", "70.00", 30),
         ],
     },
     {
-        "slug": "waghodia-mobile-hub",
-        "category": ("Mobile Accessories", "📱", 6),
-        "name": "Waghodia Mobile Hub",
-        "description": "Chargers, cables and useful mobile accessories for students.",
-        "address": "Limda Market, Waghodia",
+        "slug": "parul-sevashram-pharmacy",
+        "category": ("Health & Personal Care", "🩹", 6),
+        "name": "Parul Sevashram Pharmacy",
+        "description": "Pharmacy listed at Parul Sevashram Hospital, Limda. Catalogue below is sample data; confirm inventory and prices with the pharmacy.",
+        "address": "Parul Sevashram Hospital, Limda, Waghodia, Vadodara 391760",
         "products": [
-            ("20W Fast Charger", "1 piece", "699.00", 20),
-            ("Type-C Charging Cable", "1 metre", "149.00", 45),
-            ("Tempered Glass", "1 piece", "129.00", 40),
-            ("Power Bank", "10000 mAh", "899.00", 15),
+            ("Basic First Aid Kit", "1 kit", "199.00", 12),
+            ("Adhesive Bandages", "1 pack", "45.00", 20),
+            ("Digital Thermometer", "1 piece", "160.00", 10),
+            ("Hand Sanitizer", "100 ml", "55.00", 20),
         ],
     },
     {
@@ -129,6 +132,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         shop_count = 0
         product_count = 0
+        configured_password = os.getenv("SEED_DEMO_PASSWORD", "").strip()
+        password = configured_password or secrets.token_urlsafe(18)
+        generated_password = not configured_password
 
         for index, spec in enumerate(SHOP_SPECS, start=1):
             category_name, icon, sort_order = spec["category"]
@@ -136,7 +142,7 @@ class Command(BaseCommand):
                 slug=slugify(category_name),
                 defaults={"name": category_name, "icon": icon, "sort_order": sort_order},
             )
-            seller, _ = User.objects.get_or_create(
+            seller, created = User.objects.get_or_create(
                 username=f"parul_seller_{index}",
                 defaults={
                     "email": f"parul.seller{index}@example.com",
@@ -146,6 +152,9 @@ class Command(BaseCommand):
                     "last_name": "Seller",
                 },
             )
+            if created or not seller.has_usable_password():
+                seller.set_password(password)
+                seller.save(update_fields=["password"])
             shop, _ = Shop.objects.update_or_create(
                 slug=spec["slug"],
                 defaults={
@@ -190,3 +199,5 @@ class Command(BaseCommand):
                 f"Parul University data ready: {shop_count} shops and {product_count} products at {PINCODE}."
             )
         )
+        if generated_password:
+            self.stdout.write(f"Generated shop-owner demo password once (all new sellers): {password}")

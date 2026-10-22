@@ -36,10 +36,15 @@ class OrderGroup(models.Model):
 
 
 class DeliveryAgent(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True, related_name="delivery_agent")
+    shop = models.ForeignKey("shops.Shop", on_delete=models.CASCADE, null=True, blank=True, related_name="delivery_agents")
     name = models.CharField(max_length=120)
     phone = models.CharField(max_length=10, validators=[phone_validator], unique=True)
     vehicle_number = models.CharField(max_length=30, blank=True)
     is_available = models.BooleanField(default=True, db_index=True)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    location_updated_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ["name"]

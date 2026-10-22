@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Delivery Staff{% endblock %}
+{% block content %}
+<section class="section">
+  <h1>Delivery staff</h1>
+  <form method="post" class="card">{% csrf_token %}<input type="hidden" name="action" value="add">
+    <label>Name <input name="name" maxlength="120" required></label>
+    <label>Phone <input name="phone" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" required></label>
+    <label>Vehicle number <input name="vehicle_number" maxlength="30"></label>
+    <button class="button">Add rider</button>
+  </form>
+  {% if issued_password %}<p class="card">New rider login: <strong>rider_{{ request.POST.phone }}</strong> · Temporary password: <strong>{{ issued_password }}</strong>. Share it securely. The rider can <a href="{% url 'accounts:password_change' %}">change password</a> after signing in.</p>{% endif %}
+</section>
+<section class="section">
+  <h2>Your team</h2>
+  {% for agent in agents %}<article class="card"><h3>{{ agent.name }}</h3><p>{{ agent.phone }}{% if agent.vehicle_number %} · {{ agent.vehicle_number }}{% endif %} · {% if agent.is_available %}Available{% else %}Unavailable{% endif %}</p><p>Login: {{ agent.user.username|default:"Not linked" }}</p><form method="post">{% csrf_token %}<input type="hidden" name="action" value="availability"><input type="hidden" name="agent_id" value="{{ agent.pk }}"><button class="button secondary">Mark {% if agent.is_available %}unavailable{% else %}available{% endif %}</button></form></article>{% empty %}<p>No shop delivery staff added.</p>{% endfor %}
+</section>
+{% endblock %}

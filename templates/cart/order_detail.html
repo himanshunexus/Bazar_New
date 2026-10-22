@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% load money %}
-{% block head %}<script src="{% static 'js/order-tracking.js' %}" defer></script>{% endblock %}
+{% block head %}<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="{% static 'js/order-tracking.js' %}" defer></script>{% endblock %}
 {% block content %}
 <section class="section narrow">
   <div class="section-head"><div><p class="eyebrow">{{ order.order_number }}</p><h1>{{ order.shop.name }}</h1></div><span class="badge {% if order.status == 'DELIVERED' %}success{% else %}warning{% endif %}">{{ order.get_status_display }}</span></div>
@@ -13,6 +13,8 @@
         <p class="muted">Partner: {{ order.delivery_agent.phone }}{% if order.delivery_agent.vehicle_number %} · {{ order.delivery_agent.vehicle_number }}{% endif %}</p>
         <div class="countdown-card"><span>Estimated arrival</span><strong id="delivery-countdown">Calculating…</strong></div>
         <p class="arrival-alert" id="arrival-alert" hidden>⚡ Rider is nearby! Arriving within 10 minutes</p>
+        <p id="rider-location-status" class="muted" role="status" aria-live="polite">Waiting for rider location…</p>
+        <div id="rider-map" data-location-url="{% url 'cart:rider_location_for_order' order.pk %}" style="height:280px;border-radius:12px"></div>
       </div>
     {% endif %}
     {% for item in order.items.all %}<div class="row"><span>{{ item.product_name }} × {{ item.quantity }}</span><strong>{{ item.line_total|inr }}</strong></div>{% endfor %}
